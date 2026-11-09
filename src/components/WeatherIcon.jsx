@@ -1,7 +1,9 @@
 import {
   Sun,
   SunDim,
+  Moon,
   CloudSun,
+  CloudMoon,
   Cloud,
   CloudFog,
   CloudDrizzle,
@@ -13,7 +15,9 @@ import {
 const ICON_MAP = {
   Sun,
   SunDim,
+  Moon,
   CloudSun,
+  CloudMoon,
   Cloud,
   CloudFog,
   CloudDrizzle,
@@ -26,4 +30,3 @@ export default function WeatherIcon({ iconName, size = 48, color = 'currentColor
   const IconComponent = ICON_MAP[iconName] || Cloud
   return <IconComponent size={size} color={color} strokeWidth={2} className={className} />
 }
-

@@ -1,5 +1,71 @@
 /* 실시간 날씨 & 완성형 대시보드 스타일 */
 
+/* ==========================================================================
+   동적 비주얼 테마 (옵션 A) 최상위 래퍼
+   ========================================================================== */
+.weather-app-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+}
+
+/* 테마: 기본 */
+.weather-app-wrapper.theme-default {
+  background: var(--bg);
+}
+
+/* 테마: 맑은 낮 (화사한 스카이블루) */
+.weather-app-wrapper.theme-sunny-day {
+  background: linear-gradient(180deg, #e0f2fe 0%, #f0fdf4 40%, var(--bg) 100%);
+}
+
+/* 테마: 맑은 밤 (깊은 밤하늘 딥 인디고-퍼플) */
+.weather-app-wrapper.theme-clear-night {
+  background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 40%, #090d16 100%);
+}
+
+/* 테마: 흐림 (소프트 슬레이트 그레이) */
+.weather-app-wrapper.theme-cloudy {
+  background: linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 45%, var(--bg) 100%);
+}
+
+.weather-app-wrapper.theme-cloudy-night {
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #050811 100%);
+}
+
+/* 테마: 비 / 소나기 (딥 블루-차분한 인디고) */
+.weather-app-wrapper.theme-rainy {
+  background: linear-gradient(180deg, #1e3a5f 0%, #1e293b 45%, #0b1120 100%);
+}
+
+/* 테마: 눈 (맑고 시원한 쿨 아이스 블루) */
+.weather-app-wrapper.theme-snowy {
+  background: linear-gradient(180deg, #e0f2fe 0%, #f8fafc 45%, var(--bg) 100%);
+}
+
+/* 테마: 뇌우 (어두운 퍼플-차콜) */
+.weather-app-wrapper.theme-stormy {
+  background: linear-gradient(180deg, #2e1065 0%, #18181b 45%, #050508 100%);
+}
+
+/* 테마: 안개 (미스티 그레이) */
+.weather-app-wrapper.theme-foggy {
+  background: linear-gradient(180deg, #cbd5e1 0%, #f1f5f9 45%, var(--bg) 100%);
+}
+
+/* 야간/어두운 테마 시 메인 텍스트 명암 보정 */
+.weather-app-wrapper.theme-clear-night .header-title h1,
+.weather-app-wrapper.theme-clear-night .subtitle,
+.weather-app-wrapper.theme-rainy .header-title h1,
+.weather-app-wrapper.theme-rainy .subtitle,
+.weather-app-wrapper.theme-stormy .header-title h1,
+.weather-app-wrapper.theme-stormy .subtitle,
+.weather-app-wrapper.theme-cloudy-night .header-title h1,
+.weather-app-wrapper.theme-cloudy-night .subtitle {
+  color: #f8fafc;
+}
+
 .weather-app {
   width: 100%;
   max-width: 960px;
@@ -7,7 +73,7 @@
   padding: 32px 20px 56px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 22px;
   box-sizing: border-box;
 }
 
@@ -18,7 +84,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
   text-align: center;
 }
 
@@ -50,16 +116,16 @@
   align-items: center;
   width: 100%;
   border-radius: 9999px;
-  background: var(--code-bg);
+  background: var(--bg);
   border: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
 }
 
 .search-input-wrapper:focus-within {
   border-color: #3b82f6;
   background: var(--bg);
-  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.22);
 }
 
 .search-icon {
@@ -114,7 +180,7 @@
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
   list-style: none;
   padding: 8px;
   margin: 0;
@@ -170,6 +236,82 @@
 }
 
 /* ==========================================================================
+   최근 본 도시 (옵션 B)
+   ========================================================================== */
+.recent-cities-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.recent-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.recent-icon {
+  color: #3b82f6;
+}
+
+.recent-chips-list {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.recent-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--bg);
+  border: 1px dashed var(--border);
+  border-radius: 9999px;
+  font-size: 12px;
+  color: var(--text-h);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.recent-chip:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: var(--code-bg);
+}
+
+.recent-chip.active {
+  border-style: solid;
+  border-color: #3b82f6;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.chip-remove-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  padding: 1px;
+  border-radius: 50%;
+}
+
+.chip-remove-btn:hover {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* ==========================================================================
    주요 도시 선택 바 (CitySelector)
    ========================================================================== */
 .city-selector-section {
@@ -190,7 +332,7 @@
   padding: 8px 16px;
   border-radius: 9999px;
   border: 1px solid var(--border);
-  background: var(--code-bg);
+  background: var(--bg);
   color: var(--text);
   font-size: 13px;
   font-weight: 500;
@@ -292,7 +434,7 @@
 }
 
 /* ==========================================================================
-   대시보드 메인 레이아웃
+   대시보드 메인 레이아웃 & 카드
    ========================================================================== */
 .dashboard-layout {
   display: flex;
@@ -306,11 +448,12 @@
   gap: 20px;
 }
 
-/* 공통 카드 스타일 */
+/* 공통 카드 스타일 (글래스모피즘 & 부드러운 그림자) */
 .card {
   border-radius: 20px;
   border: 1px solid var(--border);
   background: var(--bg);
+  backdrop-filter: blur(8px);
   box-shadow: var(--shadow);
   padding: 24px;
   display: flex;
@@ -525,10 +668,10 @@
 }
 
 /* ==========================================================================
-   24시간 기온 차트 카드 (HourlyChart)
+   24시간 기온 차트 카드 (HourlyChart) - 일체형 스크롤 정렬
    ========================================================================== */
 .hourly-card {
-  padding-bottom: 16px;
+  padding-bottom: 18px;
 }
 
 .hourly-range-info {
@@ -541,7 +684,7 @@
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 6px 0 0;
+  padding: 4px 0 2px;
   scrollbar-width: thin;
 }
 
@@ -554,14 +697,16 @@
   border-radius: 9999px;
 }
 
-.hourly-svg-chart {
-  display: block;
+.hourly-chart-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .hourly-icons-row {
   display: flex;
-  width: max-content;
-  padding: 2px 0 6px;
+  align-items: center;
+  padding: 6px 0 2px;
 }
 
 .hourly-icon-col {
@@ -569,6 +714,15 @@
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.hourly-icon-col:hover {
+  transform: scale(1.2);
+}
+
+.hourly-svg-chart {
+  display: block;
 }
 
 /* ==========================================================================

@@ -27,12 +27,33 @@ export default function HourlyChart({ weather }) {
       const idx = startIndex + i
       const timeStr = times[idx]
       const hour = new Date(timeStr).getHours()
+      const isNight = hour < 6 || hour >= 19
+      const code = codes[idx]
+      const baseInfo = getWeatherInfo(code)
+
+      // 야간(19시~06시) 시 맑음/구름조금일 경우 햇살 대신 달(Moon) 아이콘 적용
+      let displayIcon = baseInfo.icon
+      let displayColor = baseInfo.color
+
+      if (isNight) {
+        if (code === 0 || code === 1) {
+          displayIcon = 'Moon'
+          displayColor = '#818cf8' // 차분한 보라/남색
+        } else if (code === 2) {
+          displayIcon = 'CloudMoon'
+          displayColor = '#94a3b8'
+        }
+      }
+
       result.push({
         time: timeStr,
         hourLabel: i === 0 ? '지금' : `${hour}시`,
         temp: Math.round(temps[idx]),
         exactTemp: temps[idx],
-        code: codes[idx],
+        code,
+        icon: displayIcon,
+        color: displayColor,
+        isNight,
       })
     }
     return result
@@ -41,10 +62,10 @@ export default function HourlyChart({ weather }) {
   if (hourlyData.length === 0) return null
 
   // 차트 크기 및 좌표 계산
-  const pointWidth = 60
-  const chartHeight = 160
-  const paddingTop = 40
-  const paddingBottom = 40
+  const pointWidth = 58
+  const chartHeight = 150
+  const paddingTop = 36
+  const paddingBottom = 30
   const chartWidth = Math.max(hourlyData.length * pointWidth, 600)
 
   const temps = hourlyData.map((d) => d.exactTemp)
@@ -54,7 +75,6 @@ export default function HourlyChart({ weather }) {
 
   const points = hourlyData.map((d, i) => {
     const x = i * pointWidth + pointWidth / 2
-    // 최고 기온이 위쪽(paddingTop), 최저 기온이 아래쪽(chartHeight - paddingBottom)
     const normalized = (d.exactTemp - minTemp) / tempRange
     const y = chartHeight - paddingBottom - normalized * (chartHeight - paddingTop - paddingBottom)
     return { ...d, x, y }
@@ -65,7 +85,7 @@ export default function HourlyChart({ weather }) {
   // 부드러운 그라데이션 영역을 위한 path d 생성
   const firstPoint = points[0]
   const lastPoint = points[points.length - 1]
-  const areaPath = `M ${firstPoint.x},${chartHeight - 15} L ${polylinePoints} L ${lastPoint.x},${chartHeight - 15} Z`
+  const areaPath = `M ${firstPoint.x},${chartHeight - 10} L ${polylinePoints} L ${lastPoint.x},${chartHeight - 10} Z`
 
   return (
     <article className="card hourly-card">
@@ -79,44 +99,59 @@ export default function HourlyChart({ weather }) {
         </span>
       </div>
 
+      {/* 가로 스크롤 래퍼: SVG와 아이콘/라벨이 일체형으로 스크롤됨 */}
       <div className="hourly-chart-scroll-wrapper">
-        <svg
-          className="hourly-svg-chart"
-          width={chartWidth}
-          height={chartHeight}
-          viewBox={`0 0 ${chartWidth} ${chartHeight}`}
-        >
-          <defs>
-            <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
-            </linearGradient>
-          </defs>
+        <div className="hourly-chart-inner" style={{ width: chartWidth }}>
+          {/* 상단 날씨 아이콘 행 (차트 포인트와 1:1 정렬) */}
+          <div className="hourly-icons-row" style={{ width: chartWidth }}>
+            {points.map((p) => (
+              <div
+                key={`icon-${p.time}`}
+                className="hourly-icon-col"
+                style={{ width: pointWidth }}
+                title={`${p.hourLabel} 날씨`}
+              >
+                <WeatherIcon iconName={p.icon} size={20} color={p.color} />
+              </div>
+            ))}
+          </div>
 
-          {/* 은은한 배경 그라데이션 영역 */}
-          <path d={areaPath} fill="url(#chartGradient)" />
+          {/* SVG 꺾은선 차트 */}
+          <svg
+            className="hourly-svg-chart"
+            width={chartWidth}
+            height={chartHeight}
+            viewBox={`0 0 ${chartWidth} ${chartHeight}`}
+          >
+            <defs>
+              <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.32" />
+                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.0" />
+              </linearGradient>
+            </defs>
 
-          {/* 꺾은선 */}
-          <polyline
-            fill="none"
-            stroke="#3b82f6"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            points={polylinePoints}
-          />
+            {/* 배경 그라데이션 영역 */}
+            <path d={areaPath} fill="url(#chartGradient)" />
 
-          {/* 포인트 점, 기온 라벨, 시간 라벨 */}
-          {points.map((p, i) => {
-            const info = getWeatherInfo(p.code)
-            return (
+            {/* 꺾은선 */}
+            <polyline
+              fill="none"
+              stroke="#3b82f6"
+              strokeWidth="2.8"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              points={polylinePoints}
+            />
+
+            {/* 각 포인트 점, 기온 수치, 시간 라벨 */}
+            {points.map((p, i) => (
               <g key={p.time} className="chart-point-group">
                 {/* 수직 보조선 */}
                 <line
                   x1={p.x}
-                  y1={chartHeight - 30}
+                  y1={chartHeight - 22}
                   x2={p.x}
-                  y2={chartHeight - 20}
+                  y2={chartHeight - 16}
                   stroke="var(--border)"
                   strokeWidth="1"
                 />
@@ -134,7 +169,7 @@ export default function HourlyChart({ weather }) {
                 {/* 기온 텍스트 */}
                 <text
                   x={p.x}
-                  y={p.y - 12}
+                  y={p.y - 10}
                   textAnchor="middle"
                   className="chart-temp-text"
                   fill="var(--text-h)"
@@ -147,7 +182,7 @@ export default function HourlyChart({ weather }) {
                 {/* 시간 라벨 */}
                 <text
                   x={p.x}
-                  y={chartHeight - 6}
+                  y={chartHeight - 4}
                   textAnchor="middle"
                   className="chart-hour-text"
                   fill={i === 0 ? '#2563eb' : 'var(--text)'}
@@ -157,23 +192,10 @@ export default function HourlyChart({ weather }) {
                   {p.hourLabel}
                 </text>
               </g>
-            )
-          })}
-        </svg>
-      </div>
-
-      {/* 시간대별 날씨 상태 아이콘 리스트 */}
-      <div className="hourly-icons-row">
-        {points.map((p) => {
-          const info = getWeatherInfo(p.code)
-          return (
-            <div key={`icon-${p.time}`} className="hourly-icon-col" style={{ width: pointWidth }}>
-              <WeatherIcon iconName={info.icon} size={20} color={info.color} />
-            </div>
-          )
-        })}
+            ))}
+          </svg>
+        </div>
       </div>
     </article>
   )
 }
-
