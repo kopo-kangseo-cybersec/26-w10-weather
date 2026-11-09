@@ -140,3 +140,4 @@ export default function CitySearch({ onSelectCity }) {
     </div>
   )
 }
+

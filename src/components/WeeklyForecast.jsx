@@ -30,9 +30,15 @@ function WeatherIcon({ name, size = 24, color = 'currentColor', className = '' }
   return <IconComp size={size} color={color} className={className} />
 }
 
-export default function WeeklyForecast({ weather }) {
+export default function WeeklyForecast({ weather, tempUnit = 'C' }) {
   const daily = weather?.daily
   if (!daily || !daily.time) return null
+
+  const formatTemp = (celsius) => {
+    if (celsius === null || celsius === undefined) return 0
+    const val = tempUnit === 'F' ? celsius * 1.8 + 32 : celsius
+    return Math.round(val)
+  }
 
   const days = daily.time.map((dateStr, idx) => {
     const date = new Date(dateStr)
@@ -46,8 +52,8 @@ export default function WeeklyForecast({ weather }) {
     const dateNum = `${date.getMonth() + 1}.${date.getDate()}`
     const code = daily.weather_code?.[idx]
     const meta = getWeatherInfo(code)
-    const maxTemp = Math.round(daily.temperature_2m_max?.[idx] ?? 0)
-    const minTemp = Math.round(daily.temperature_2m_min?.[idx] ?? 0)
+    const maxTemp = formatTemp(daily.temperature_2m_max?.[idx])
+    const minTemp = formatTemp(daily.temperature_2m_min?.[idx])
     const precipProb = daily.precipitation_probability_max?.[idx] ?? 0
 
     return {
@@ -67,7 +73,7 @@ export default function WeeklyForecast({ weather }) {
       <div className="card-header">
         <div>
           <span className="card-tag">주간 기상 예보</span>
-          <h2 className="city-title">향후 7일간 일기예보</h2>
+          <h2 className="city-title">향후 7일간 일기예보 (°{tempUnit})</h2>
         </div>
         <div className="chart-legend">
           <Calendar size={16} />
@@ -112,8 +118,8 @@ export default function WeeklyForecast({ weather }) {
                 <div
                   className="temp-bar-fill"
                   style={{
-                    marginLeft: `${Math.max(0, (d.minTemp + 10) * 2)}%`,
-                    width: `${Math.max(20, (d.maxTemp - d.minTemp) * 8)}%`,
+                    marginLeft: `${Math.max(0, Math.min(60, (d.minTemp) * 1.5))}%`,
+                    width: `${Math.max(25, Math.min(80, (d.maxTemp - d.minTemp) * 5))}%`,
                   }}
                 ></div>
               </div>

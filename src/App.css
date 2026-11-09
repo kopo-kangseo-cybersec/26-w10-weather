@@ -2,6 +2,69 @@
    실시간 날씨 & 미세먼지 스마트 대시보드 스타일 (App.css)
    ========================================================= */
 
+/* 최상위 테마 래퍼 (옵션 A: 동적 날씨 비주얼 테마) */
+.weather-app-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  transition: background 0.8s ease, color 0.4s ease;
+  background: var(--bg);
+}
+
+/* 1. 야간 테마 (Deep Midnight Navy) */
+.weather-app-wrapper.theme-night {
+  background: linear-gradient(180deg, #090d16 0%, #111827 50%, #1f2937 100%);
+  --bg: rgba(22, 27, 39, 0.75);
+  --code-bg: rgba(30, 41, 59, 0.6);
+  --border: rgba(51, 65, 85, 0.6);
+  --text: #94a3b8;
+  --text-h: #f8fafc;
+}
+
+/* 2. 맑은 낮 테마 (Bright Sky Blue & Sunshine) */
+.weather-app-wrapper.theme-clear {
+  background: linear-gradient(180deg, #eff6ff 0%, #dbeafe 50%, #f0fdf4 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .weather-app-wrapper.theme-clear {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  }
+}
+
+/* 3. 비/소나기 테마 (Rainy Slate Blue) */
+.weather-app-wrapper.theme-rain {
+  background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .weather-app-wrapper.theme-rain {
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 50%, #1e1b4b 100%);
+  }
+}
+
+/* 4. 눈 테마 (Winter Ice White & Soft Blue) */
+.weather-app-wrapper.theme-snow {
+  background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .weather-app-wrapper.theme-snow {
+    background: linear-gradient(180deg, #172554 0%, #1e293b 100%);
+  }
+}
+
+/* 5. 흐림 테마 (Soft Ash Gray) */
+.weather-app-wrapper.theme-cloudy {
+  background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .weather-app-wrapper.theme-cloudy {
+    background: linear-gradient(180deg, #18181b 0%, #27272a 100%);
+  }
+}
+
+/* 메인 컨테이너 */
 .weather-app {
   width: 100%;
   max-width: 1080px;
@@ -10,7 +73,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   text-align: left;
 }
 
@@ -55,6 +118,34 @@
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+/* 단위 변환 토글 (옵션 D) */
+.unit-toggle {
+  display: inline-flex;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 2px;
+  gap: 2px;
+}
+
+.unit-btn {
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.unit-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.3);
 }
 
 .last-updated {
@@ -183,6 +274,7 @@
   overflow-y: auto;
   z-index: 50;
   padding: 6px;
+  backdrop-filter: blur(8px);
 }
 
 .dropdown-message {
@@ -246,7 +338,98 @@
   opacity: 0.8;
 }
 
-/* 3. 도시 빠른 선택 프리셋 버튼 섹션 */
+/* 3. 최근 조회한 도시 (옵션 B) */
+.recent-cities-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: var(--code-bg);
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+.recent-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.recent-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.clear-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  font-size: 11px;
+  color: var(--text);
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.clear-all-btn:hover {
+  opacity: 1;
+  color: #ef4444;
+}
+
+.recent-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.recent-chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.recent-chip:hover {
+  border-color: #38bdf8;
+}
+
+.chip-btn {
+  background: none;
+  border: none;
+  padding: 5px 8px 5px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-h);
+  cursor: pointer;
+}
+
+.chip-remove {
+  background: none;
+  border: none;
+  padding: 5px 8px 5px 2px;
+  color: var(--text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  opacity: 0.6;
+}
+
+.chip-remove:hover {
+  opacity: 1;
+  color: #ef4444;
+}
+
+/* 4. 도시 빠른 선택 프리셋 버튼 섹션 */
 .city-selector-section {
   display: flex;
   flex-direction: column;
@@ -299,7 +482,7 @@
   font-weight: 600;
 }
 
-/* 4. 본문 플로우 및 카드 그리드 */
+/* 5. 본문 플로우 및 카드 그리드 */
 .dashboard-flow {
   display: flex;
   flex-direction: column;
@@ -322,6 +505,7 @@
   flex-direction: column;
   gap: 18px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  backdrop-filter: blur(12px);
 }
 
 .card:hover {
@@ -373,7 +557,7 @@
   color: #ffffff;
 }
 
-/* 4-1. 현재 날씨 카드 */
+/* 5-1. 현재 날씨 카드 */
 .weather-main-row {
   display: flex;
   align-items: center;
@@ -403,7 +587,7 @@
 }
 
 .temp-unit {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 500;
   color: var(--text);
   margin-left: 2px;
@@ -453,7 +637,7 @@
   color: var(--text);
 }
 
-/* 4-2. 미세먼지 카드 */
+/* 5-2. 미세먼지 카드 */
 .air-summary {
   padding: 10px 14px;
   background: var(--code-bg);
@@ -554,7 +738,7 @@
   transition: width 0.4s ease-out;
 }
 
-/* 4-3. 24시간 기온 SVG 차트 카드 */
+/* 5-3. 24시간 기온 SVG 차트 카드 */
 .hourly-card {
   padding-bottom: 16px;
 }
@@ -598,7 +782,7 @@
   filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.6));
 }
 
-/* 4-4. 향후 7일간 주간 일기예보 카드 */
+/* 5-4. 향후 7일간 주간 일기예보 카드 */
 .weekly-list {
   display: flex;
   flex-direction: column;
@@ -678,7 +862,7 @@
   font-size: 13px;
   font-weight: 600;
   color: #3b82f6;
-  width: 30px;
+  width: 32px;
   text-align: right;
 }
 
@@ -686,7 +870,7 @@
   font-size: 13px;
   font-weight: 700;
   color: #ef4444;
-  width: 30px;
+  width: 32px;
   text-align: left;
 }
 
@@ -706,7 +890,7 @@
   border-radius: 3px;
 }
 
-/* 5. 로딩 / 에러 패널 */
+/* 6. 로딩 / 에러 패널 */
 .state-panel {
   display: flex;
   flex-direction: column;
@@ -764,7 +948,7 @@
   cursor: pointer;
 }
 
-/* 6. 푸터 */
+/* 7. 푸터 */
 .app-footer {
   padding-top: 14px;
   border-top: 1px solid var(--border);

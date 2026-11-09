@@ -31,11 +31,21 @@ function WeatherIcon({ name, size = 48, color = 'currentColor', className = '' }
   return <IconComp size={size} color={color} className={className} />
 }
 
-export default function CurrentWeather({ city, weather }) {
+export default function CurrentWeather({ city, weather, tempUnit = 'C' }) {
   const current = weather?.current
   if (!current) return null
 
   const meta = getWeatherInfo(current.weather_code)
+
+  // 섭씨/화씨 변환
+  const formatTemp = (celsius) => {
+    if (celsius === null || celsius === undefined) return '-'
+    const val = tempUnit === 'F' ? celsius * 1.8 + 32 : celsius
+    return Math.round(val)
+  }
+
+  const tempVal = formatTemp(current.temperature_2m)
+  const apparentVal = formatTemp(current.apparent_temperature)
 
   return (
     <article className="card weather-card">
@@ -65,11 +75,11 @@ export default function CurrentWeather({ city, weather }) {
         </div>
         <div className="temperature-group">
           <span className="temp-value">
-            {Math.round(current.temperature_2m)}
-            <span className="temp-unit">°C</span>
+            {tempVal}
+            <span className="temp-unit">°{tempUnit}</span>
           </span>
           <span className="temp-sub">
-            체감 {Math.round(current.apparent_temperature)}°C
+            체감 {apparentVal}°{tempUnit}
           </span>
         </div>
       </div>
@@ -81,7 +91,7 @@ export default function CurrentWeather({ city, weather }) {
             <span>체감온도</span>
           </div>
           <strong className="metric-value">
-            {Math.round(current.apparent_temperature)}°C
+            {apparentVal}°{tempUnit}
           </strong>
         </div>
 

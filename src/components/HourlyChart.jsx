@@ -1,20 +1,20 @@
 import { useMemo } from 'react'
 import { Clock } from 'lucide-react'
 
-export default function HourlyChart({ weather }) {
+export default function HourlyChart({ weather, tempUnit = 'C' }) {
   const hourly = weather?.hourly
 
-  // 오늘 하루 24시간 데이터 파싱 (0시~23시 또는 첫 24개 데이터)
+  // 오늘 하루 24시간 데이터 파싱 (0시~23시)
   const chartData = useMemo(() => {
     if (!hourly || !hourly.time || !hourly.temperature_2m) return []
 
-    // 첫 24개 시간 슬라이스
     const count = Math.min(24, hourly.time.length)
     const list = []
 
     for (let i = 0; i < count; i++) {
       const timeStr = hourly.time[i]
-      const temp = hourly.temperature_2m[i]
+      const celsius = hourly.temperature_2m[i]
+      const val = tempUnit === 'F' ? celsius * 1.8 + 32 : celsius
       const date = new Date(timeStr)
       const hour = date.getHours()
 
@@ -22,11 +22,11 @@ export default function HourlyChart({ weather }) {
         time: timeStr,
         hourText: `${String(hour).padStart(2, '0')}:00`,
         hour,
-        temp: Math.round(temp * 10) / 10,
+        temp: Math.round(val * 10) / 10,
       })
     }
     return list
-  }, [hourly])
+  }, [hourly, tempUnit])
 
   if (!chartData.length) return null
 
@@ -64,7 +64,7 @@ export default function HourlyChart({ weather }) {
       <div className="card-header">
         <div>
           <span className="card-tag">시간대별 기상 예보</span>
-          <h2 className="city-title">오늘 24시간 기온 추이</h2>
+          <h2 className="city-title">오늘 24시간 기온 추이 (°{tempUnit})</h2>
         </div>
         <div className="chart-legend">
           <Clock size={16} />
@@ -110,7 +110,7 @@ export default function HourlyChart({ weather }) {
               opacity="0.8"
             />
 
-            {/* 그라데이션 영역 */}
+            {/* 그라데이션 면적 */}
             <polygon points={areaPoints} fill="url(#tempGradient)" />
 
             {/* 꺾은선 */}
@@ -128,7 +128,7 @@ export default function HourlyChart({ weather }) {
               const isNow = p.hour === currentHour
               return (
                 <g key={idx} className={`chart-point-group ${isNow ? 'is-current' : ''}`}>
-                  {/* 현재 시각 수직 가이드라인 */}
+                  {/* 현재 시각 수직선 */}
                   {isNow && (
                     <line
                       x1={p.x}
@@ -141,7 +141,7 @@ export default function HourlyChart({ weather }) {
                     />
                   )}
 
-                  {/* 점 포인트 */}
+                  {/* 포인트 점 */}
                   <circle
                     cx={p.x}
                     cy={p.y}
@@ -164,7 +164,7 @@ export default function HourlyChart({ weather }) {
                     {Math.round(p.temp)}°
                   </text>
 
-                  {/* 시간 레이블 (2시간 간격 또는 현재 시간) */}
+                  {/* 시간 레이블 */}
                   {(p.hour % 3 === 0 || isNow) && (
                     <text
                       x={p.x}
