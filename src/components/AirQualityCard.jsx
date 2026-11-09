@@ -5,7 +5,7 @@ export default function AirQualityCard({ airQuality }) {
   const currentAir = airQuality?.current
   const pm10Value = currentAir?.pm10 ?? null
   const pm25Value = currentAir?.pm2_5 ?? null
-
+ 
   const airStatus = (pm10Value !== null && pm25Value !== null)
     ? getAirQualityStatus(pm10Value, pm25Value)
     : null
