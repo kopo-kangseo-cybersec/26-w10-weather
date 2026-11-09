@@ -69,5 +69,5 @@
 ## 🚀 실행 및 배포 링크
 
 - **로컬 실행**: `npm run dev` (포트 `5173`)
-- **Netlify 배포 URL**: *배포 후 기재 예정*
-- **GitHub Pages 배포 URL**: *배포 후 기재 예정*
+- **GitHub Pages 배포 URL**: https://yoooooeun.github.io/weather/
+- **Netlify 배포 URL**: https://app.netlify.com 에서 연동 후 자동 발급 (예: `https://<site-name>.netlify.app`)
