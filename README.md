@@ -65,7 +65,7 @@
 ## 🌐 실행 및 배포 링크
 
 - **GitHub Pages 배포 URL**: `https://taeyoon-hack.github.io/26-w10-weather/`
-- **Netlify 배포 URL**: `https://<사이트이름>.netlify.app` (Netlify 연결 후 생성된 주소 기재)
+- **Netlify 배포 URL**: `https://tycloudy.netlify.app` 
 
 ---
 
