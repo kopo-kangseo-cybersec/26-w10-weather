@@ -4,7 +4,7 @@ import {
   fetchWeatherData,
   fetchAirQualityData,
 } from './api/weather'
-import { RefreshCw, AlertCircle, MapPin } from 'lucide-react'
+import { RefreshCw, AlertCircle, MapPin, Sun, Moon } from 'lucide-react'
 import CurrentWeather from './components/CurrentWeather'
 import AirQualityCard from './components/AirQualityCard'
 import HourlyChart from './components/HourlyChart'
@@ -14,6 +14,7 @@ import RecentCities from './components/RecentCities'
 import './App.css'
 
 const STORAGE_KEY = 'weather_recent_cities_v1'
+const THEME_MODE_KEY = 'weather_color_mode_v1'
 
 export default function App() {
   const [selectedCity, setSelectedCity] = useState(DEFAULT_CITIES[0])
@@ -24,6 +25,15 @@ export default function App() {
   const [lastUpdated, setLastUpdated] = useState(null)
   const [tempUnit, setTempUnit] = useState('C') // 'C' or 'F'
 
+  // 라이트 / 다크(나이트) 모드 상태 관리 (기본값: 'dark' - 나이트 모드)
+  const [colorMode, setColorMode] = useState(() => {
+    try {
+      return localStorage.getItem(THEME_MODE_KEY) || 'dark'
+    } catch {
+      return 'dark'
+    }
+  })
+
   // 최근 조회한 도시 목록 (localStorage)
   const [recentCities, setRecentCities] = useState(() => {
     try {
@@ -33,6 +43,19 @@ export default function App() {
       return []
     }
   })
+
+  // 모드 토글 (라이트 ⇄ 다크)
+  const toggleColorMode = () => {
+    setColorMode((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark'
+      try {
+        localStorage.setItem(THEME_MODE_KEY, next)
+      } catch (e) {
+        console.error('테마 모드 저장 실패:', e)
+      }
+      return next
+    })
+  }
 
   // 최근 본 도시 추가
   const addRecentCity = useCallback((city) => {
@@ -101,23 +124,24 @@ export default function App() {
     loadCityData(selectedCity)
   }, [selectedCity, loadCityData])
 
-  // 동적 날씨 비주얼 테마 계산 (옵션 A)
-  const getThemeClass = () => {
-    if (!weather?.current) return 'theme-clear'
+  // 현재 기상 상태 분류 (야간 / 맑음 / 비 / 눈 / 흐림 / 뇌우)
+  const getWeatherCondition = () => {
+    if (!weather?.current) return 'clear'
     const isDay = weather.current.is_day === 1
     const code = weather.current.weather_code
 
-    if (!isDay) return 'theme-night'
-    if ([71, 73, 75, 77].includes(code)) return 'theme-snow'
-    if ([51, 53, 55, 61, 63, 65, 80, 81, 82, 95].includes(code)) return 'theme-rain'
-    if ([3, 45, 48].includes(code)) return 'theme-cloudy'
-    return 'theme-clear'
+    if (!isDay) return 'night'
+    if (code === 95) return 'thunder'
+    if ([71, 73, 75, 77].includes(code)) return 'snow'
+    if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(code)) return 'rain'
+    if ([3, 45, 48].includes(code)) return 'cloudy'
+    return 'clear'
   }
 
-  const themeClass = getThemeClass()
+  const weatherCondition = getWeatherCondition()
 
   return (
-    <div className={`weather-app-wrapper ${themeClass}`}>
+    <div className={`weather-app-wrapper mode-${colorMode} weather-${weatherCondition}`}>
       <div className="weather-app">
         {/* 1. 상단 헤더 */}
         <header className="app-header">
@@ -127,6 +151,27 @@ export default function App() {
           </div>
 
           <div className="header-meta">
+            {/* 라이트 / 다크(나이트) 모드 토글 버튼 */}
+            <button
+              type="button"
+              className="mode-toggle-btn"
+              onClick={toggleColorMode}
+              title={colorMode === 'dark' ? '라이트 모드로 전환' : '나이트 모드로 전환'}
+              aria-label="화면 모드 전환"
+            >
+              {colorMode === 'dark' ? (
+                <>
+                  <Sun size={15} className="mode-icon sun" />
+                  <span>라이트 모드</span>
+                </>
+              ) : (
+                <>
+                  <Moon size={15} className="mode-icon moon" />
+                  <span>나이트 모드</span>
+                </>
+              )}
+            </button>
+
             {/* 섭씨/화씨 토글 스위치 (옵션 D) */}
             <div className="unit-toggle" role="group" aria-label="온도 단위 선택">
               <button
@@ -169,7 +214,7 @@ export default function App() {
           <CitySearch onSelectCity={(city) => setSelectedCity(city)} />
         </section>
 
-        {/* 3. 최근 조회한 도시 (옵션 B: localStorage 연동) */}
+        {/* 3. 최근 조회한 도시 (localStorage 연동) */}
         <RecentCities
           cities={recentCities}
           onSelectCity={(city) => setSelectedCity(city)}
@@ -249,7 +294,7 @@ export default function App() {
         {/* 6. 푸터 안내 */}
         <footer className="app-footer">
           <p>
-            기상 데이터: <strong>Open-Meteo Public API</strong> (HTTPS 통신 / 400ms 디바운스 / 단위 변환 & 동적 테마 연동)
+            기상 데이터: <strong>Open-Meteo Public API</strong> (HTTPS 통신 / 나이트·라이트 모드 & 날씨별 동적 테마 탑재)
           </p>
         </footer>
       </div>
