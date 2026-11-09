@@ -1,5 +1,14 @@
-import { useState, useEffect, useCallback } from 'react'
-import { RefreshCw, AlertCircle, History, X, Monitor } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import {
+  RefreshCw,
+  AlertCircle,
+  History,
+  X,
+  Monitor,
+  Check,
+  HelpCircle,
+  Sparkles,
+} from 'lucide-react'
 import {
   DEFAULT_CITIES,
   fetchWeatherData,
@@ -15,24 +24,6 @@ import './App.css'
 
 const RECENT_STORAGE_KEY = 'weather_recent_cities'
 
-// 옵션 A: MS-DOS / 레트로 터미널 동적 비주얼 테마
-function getRetroThemeClass(weather) {
-  if (!weather?.current) return 'retro-theme-win31'
-
-  const { weather_code, is_day } = weather.current
-
-  // 비 / 눈 / 뇌우: 앰버(Amber) CRT 터미널
-  if ([51, 53, 55, 61, 63, 65, 71, 73, 75, 77, 80, 81, 82, 95].includes(weather_code)) {
-    return 'retro-theme-amber'
-  }
-  // 밤: 클래식 매트릭스/도스 그린 CRT 터미널
-  if (is_day === 0) {
-    return 'retro-theme-green'
-  }
-  // 맑은 낮: 클래식 Windows 3.1 Teal 데스크톱
-  return 'retro-theme-win31'
-}
-
 export default function App() {
   const [selectedCity, setSelectedCity] = useState(DEFAULT_CITIES[0])
   const [weather, setWeather] = useState(null)
@@ -40,8 +31,17 @@ export default function App() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // 옵션 D: 섭씨(°C)와 화씨(°F) 단위 변환 토글
+  // 옵션 D: 섭씨(°C)와 화씨(°F) 단위
   const [unit, setUnit] = useState('C')
+
+  // 테마 상태: 'auto'(기상기반), 'win31', 'green', 'amber', 'high-contrast'(고대비 다크)
+  const [colorMode, setColorMode] = useState('auto')
+  const [isHighContrast, setIsHighContrast] = useState(false)
+
+  // 상단 메뉴 드롭다운 상태 ('File' | 'Edit' | 'View' | 'Help' | null)
+  const [activeMenu, setActiveMenu] = useState(null)
+  const [showAboutModal, setShowAboutModal] = useState(false)
+  const menuBarRef = useRef(null)
 
   const convertTemp = useCallback(
     (celsius) => {
@@ -53,7 +53,7 @@ export default function App() {
     [unit]
   )
 
-  // 옵션 B: 최근 본 도시 목록 (localStorage)
+  // 최근 본 도시 목록 (localStorage)
   const [recentCities, setRecentCities] = useState(() => {
     try {
       const saved = localStorage.getItem(RECENT_STORAGE_KEY)
@@ -91,6 +91,16 @@ export default function App() {
     })
   }
 
+  const handleClearAllRecent = () => {
+    setRecentCities([])
+    try {
+      localStorage.removeItem(RECENT_STORAGE_KEY)
+    } catch (err) {
+      console.error(err)
+    }
+    setActiveMenu(null)
+  }
+
   const loadCityData = useCallback(async (city) => {
     setIsLoading(true)
     setError(null)
@@ -115,7 +125,37 @@ export default function App() {
     loadCityData(selectedCity)
   }, [selectedCity, loadCityData])
 
-  const themeClass = getRetroThemeClass(weather)
+  // 메뉴 바깥 클릭 시 메뉴 닫기
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuBarRef.current && !menuBarRef.current.contains(e.target)) {
+        setActiveMenu(null)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  // 동적 테마 클래스 계산
+  const getCalculatedThemeClass = () => {
+    if (isHighContrast) return 'retro-theme-high-contrast'
+    if (colorMode === 'win31') return 'retro-theme-win31'
+    if (colorMode === 'green') return 'retro-theme-green'
+    if (colorMode === 'amber') return 'retro-theme-amber'
+
+    // Auto 모드
+    if (!weather?.current) return 'retro-theme-win31'
+    const { weather_code, is_day } = weather.current
+    if ([51, 53, 55, 61, 63, 65, 71, 73, 75, 77, 80, 81, 82, 95].includes(weather_code)) {
+      return 'retro-theme-amber'
+    }
+    if (is_day === 0) {
+      return 'retro-theme-green'
+    }
+    return 'retro-theme-win31'
+  }
+
+  const themeClass = getCalculatedThemeClass()
 
   return (
     <div className={`retro-desktop-wrapper ${themeClass}`}>
@@ -125,44 +165,244 @@ export default function App() {
           <div className="retro-titlebar">
             <div className="titlebar-left">
               <Monitor size={16} className="titlebar-icon" />
-              <span className="title-text">MS-DOS Weather System v3.11</span>
+              <span className="title-text">
+                MS-DOS Weather System v3.11 [{isHighContrast ? 'HIGH-CONTRAST DARK' : colorMode.toUpperCase()}]
+              </span>
             </div>
             <div className="titlebar-controls">
-              <span className="win-btn">▲</span>
-              <span className="win-btn">▼</span>
+              <span
+                className="win-btn"
+                title="고대비 다크모드 토글"
+                onClick={() => setIsHighContrast((prev) => !prev)}
+              >
+                {isHighContrast ? '☼' : '☾'}
+              </span>
+              <span className="win-btn" onClick={() => loadCityData(selectedCity)} title="새로고침">
+                ↻
+              </span>
+              <span className="win-btn" onClick={() => setShowAboutModal(true)} title="정보">
+                ?
+              </span>
             </div>
           </div>
 
-          {/* 레트로 메뉴 바 및 단위 변환 토글 (옵션 D) */}
-          <div className="retro-menubar">
-            <span className="menu-item"><u>F</u>ile</span>
-            <span className="menu-item"><u>E</u>dit</span>
-            <span className="menu-item"><u>V</u>iew</span>
-            <span className="menu-item"><u>H</u>elp</span>
-            
-            {/* 옵션 D: 단위 변환 토글 버튼 */}
-            <div className="menu-unit-toggle">
-              <span className="toggle-label">[UNIT]:</span>
+          {/* ==========================================================================
+             작동 가능한 레트로 메뉴 바 (File, Edit, View, Help)
+             ========================================================================== */}
+          <div className="retro-menubar" ref={menuBarRef}>
+            {/* File 메뉴 */}
+            <div className="menu-dropdown-wrapper">
+              <span
+                className={`menu-item ${activeMenu === 'File' ? 'active' : ''}`}
+                onClick={() => setActiveMenu(activeMenu === 'File' ? null : 'File')}
+              >
+                <u>F</u>ile
+              </span>
+              {activeMenu === 'File' && (
+                <div className="retro-dropdown-menu">
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => {
+                      loadCityData(selectedCity)
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>↻ Refresh Telemetry</span>
+                    <span className="shortcut">F5</span>
+                  </button>
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={handleClearAllRecent}
+                  >
+                    <span>🗑 Clear Recent Cities</span>
+                  </button>
+                  <div className="dropdown-divider" />
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => {
+                      setSelectedCity(DEFAULT_CITIES[0])
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>⏏ Reset to Default City</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Edit 메뉴 */}
+            <div className="menu-dropdown-wrapper">
+              <span
+                className={`menu-item ${activeMenu === 'Edit' ? 'active' : ''}`}
+                onClick={() => setActiveMenu(activeMenu === 'Edit' ? null : 'Edit')}
+              >
+                <u>E</u>dit
+              </span>
+              {activeMenu === 'Edit' && (
+                <div className="retro-dropdown-menu">
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => {
+                      setUnit((prev) => (prev === 'C' ? 'F' : 'C'))
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>Toggle Unit: {unit === 'C' ? '°C → °F' : '°F → °C'}</span>
+                    <span className="shortcut">Tab</span>
+                  </button>
+                  <div className="dropdown-divider" />
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => {
+                      const input = document.querySelector('.search-input')
+                      if (input) input.focus()
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>🔍 Focus City Search</span>
+                    <span className="shortcut">/</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* View 메뉴 (다크모드 & 고대비 & 테마 전환) */}
+            <div className="menu-dropdown-wrapper">
+              <span
+                className={`menu-item ${activeMenu === 'View' ? 'active' : ''}`}
+                onClick={() => setActiveMenu(activeMenu === 'View' ? null : 'View')}
+              >
+                <u>V</u>iew
+              </span>
+              {activeMenu === 'View' && (
+                <div className="retro-dropdown-menu">
+                  <button
+                    type="button"
+                    className={`dropdown-item ${isHighContrast ? 'selected' : ''}`}
+                    onClick={() => {
+                      setIsHighContrast((prev) => !prev)
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>
+                      {isHighContrast ? '✓ ' : '  '}High-Contrast Dark Mode (고대비 다크)
+                    </span>
+                    <span className="shortcut">Shift+D</span>
+                  </button>
+                  <div className="dropdown-divider" />
+                  <button
+                    type="button"
+                    className={`dropdown-item ${colorMode === 'auto' && !isHighContrast ? 'selected' : ''}`}
+                    onClick={() => {
+                      setColorMode('auto')
+                      setIsHighContrast(false)
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>{colorMode === 'auto' && !isHighContrast ? '✓ ' : '  '}Auto (기상/주야간 연동)</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`dropdown-item ${colorMode === 'win31' && !isHighContrast ? 'selected' : ''}`}
+                    onClick={() => {
+                      setColorMode('win31')
+                      setIsHighContrast(false)
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>{colorMode === 'win31' && !isHighContrast ? '✓ ' : '  '}Windows 3.1 Teal</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`dropdown-item ${colorMode === 'green' && !isHighContrast ? 'selected' : ''}`}
+                    onClick={() => {
+                      setColorMode('green')
+                      setIsHighContrast(false)
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>{colorMode === 'green' && !isHighContrast ? '✓ ' : '  '}DOS Green CRT</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`dropdown-item ${colorMode === 'amber' && !isHighContrast ? 'selected' : ''}`}
+                    onClick={() => {
+                      setColorMode('amber')
+                      setIsHighContrast(false)
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>{colorMode === 'amber' && !isHighContrast ? '✓ ' : '  '}Amber CRT Phosphor</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Help 메뉴 */}
+            <div className="menu-dropdown-wrapper">
+              <span
+                className={`menu-item ${activeMenu === 'Help' ? 'active' : ''}`}
+                onClick={() => setActiveMenu(activeMenu === 'Help' ? null : 'Help')}
+              >
+                <u>H</u>elp
+              </span>
+              {activeMenu === 'Help' && (
+                <div className="retro-dropdown-menu">
+                  <button
+                    type="button"
+                    className="dropdown-item"
+                    onClick={() => {
+                      setShowAboutModal(true)
+                      setActiveMenu(null)
+                    }}
+                  >
+                    <span>ℹ About MS-DOS Weather...</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 우측 고속 토글: 고대비 다크모드 + 단위 변환 */}
+            <div className="menu-quick-tools">
               <button
                 type="button"
-                className={`unit-toggle-btn ${unit === 'C' ? 'active' : ''}`}
-                onClick={() => setUnit('C')}
+                className={`retro-contrast-toggle-btn ${isHighContrast ? 'active' : ''}`}
+                onClick={() => setIsHighContrast((prev) => !prev)}
+                title="고대비 다크모드 전환"
               >
-                °C
+                [CONTRAST: {isHighContrast ? 'HIGH-DARK' : 'NORMAL'}]
               </button>
-              <button
-                type="button"
-                className={`unit-toggle-btn ${unit === 'F' ? 'active' : ''}`}
-                onClick={() => setUnit('F')}
-              >
-                °F
-              </button>
+
+              <div className="menu-unit-toggle">
+                <span className="toggle-label">[UNIT]:</span>
+                <button
+                  type="button"
+                  className={`unit-toggle-btn ${unit === 'C' ? 'active' : ''}`}
+                  onClick={() => setUnit('C')}
+                >
+                  °C
+                </button>
+                <button
+                  type="button"
+                  className={`unit-toggle-btn ${unit === 'F' ? 'active' : ''}`}
+                  onClick={() => setUnit('F')}
+                >
+                  °F
+                </button>
+              </div>
             </div>
           </div>
 
           <div className="retro-header-body">
             <h1 className="retro-cli-title">C:\WEATHER&gt; METEO_DASHBOARD.EXE</h1>
-            <p className="retro-cli-sub">&gt;&gt; Open-Meteo Realtime Telemetry Station (Terminal Mode)</p>
+            <p className="retro-cli-sub">
+              &gt;&gt; Open-Meteo Realtime Telemetry Station (Terminal Mode • {isHighContrast ? 'HIGH CONTRAST ACTIVE' : 'STANDARD'})
+            </p>
           </div>
 
           {/* 도시 검색 입력창 */}
@@ -171,7 +411,7 @@ export default function App() {
           </div>
         </header>
 
-        {/* 옵션 B: 최근 본 도시 뱃지 바 */}
+        {/* 최근 본 도시 뱃지 바 */}
         {recentCities.length > 0 && (
           <section className="recent-cities-section retro-window" aria-label="최근 본 도시">
             <div className="retro-titlebar">
@@ -269,11 +509,53 @@ export default function App() {
         {/* 하단 도스 프롬프트 스타일 푸터 */}
         <footer className="retro-footer retro-window">
           <p>
-            C:\&gt; ECHO &quot;DATA PROVIDED BY OPEN-METEO API • KOREA AIR QUALITY STANDARD&quot;
+            C:\&gt; ECHO &quot;MS-DOS WEATHER TELEMETRY STATION • KOREA AIR QUALITY STANDARD&quot;
           </p>
           <span className="blinking-cursor">_</span>
         </footer>
       </div>
+
+      {/* ==========================================================================
+         Windows 3.1 클래식 About 다이얼로그 모달
+         ========================================================================== */}
+      {showAboutModal && (
+        <div className="retro-modal-overlay" onClick={() => setShowAboutModal(false)}>
+          <div className="retro-modal-window retro-window" onClick={(e) => e.stopPropagation()}>
+            <div className="retro-titlebar">
+              <span className="title-text">About Weather System</span>
+              <div className="titlebar-controls">
+                <span className="win-btn" onClick={() => setShowAboutModal(false)}>X</span>
+              </div>
+            </div>
+            <div className="modal-content-body">
+              <div className="modal-icon-row">
+                <Monitor size={32} />
+                <div className="modal-app-info">
+                  <h3>MS-DOS &amp; Windows 3.11 Weather</h3>
+                  <p>Version 3.11.2026 Release (Build 26-W10)</p>
+                  <p>Cybersecurity &amp; Realtime Telemetry Station</p>
+                </div>
+              </div>
+              <hr className="modal-divider" />
+              <div className="modal-features">
+                <p>• Data Source: Open-Meteo REST API (HTTPS Protocol)</p>
+                <p>• UI Architecture: Modular React 19 Components</p>
+                <p>• Security Layer: Decoupled API Handler &amp; 400ms Debounce</p>
+                <p>• Themes: High-Contrast Dark, DOS Green CRT, Amber CRT, Win3.1</p>
+              </div>
+              <div className="modal-button-row">
+                <button
+                  type="button"
+                  className="retro-btn modal-ok-btn"
+                  onClick={() => setShowAboutModal(false)}
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

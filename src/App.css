@@ -2,7 +2,6 @@
    MS-DOS / Windows 1.x / 2.x / 3.x 레트로 터미널 스타일시트
    ========================================================================== */
 
-/* 전체 폰트 및 모노스페이스 고정 */
 :root {
   --dos-font: 'Consolas', 'Courier New', 'Lucida Console', monospace;
   --win-gray: #c0c0c0;
@@ -22,22 +21,22 @@ body {
 }
 
 /* ==========================================================================
-   옵션 A: 동적 비주얼 테마 (Windows 3.1 Teal, DOS Green, DOS Amber)
+   옵션 A: 동적 비주얼 테마 (Windows 3.1, Green CRT, Amber CRT, High-Contrast Dark)
    ========================================================================== */
 .retro-desktop-wrapper {
   min-height: 100vh;
   width: 100%;
   padding: 16px 10px 40px;
   box-sizing: border-box;
-  transition: background-color 0.4s ease;
+  transition: background-color 0.3s ease;
 }
 
-/* 1. 맑은 낮: Windows 3.1 정통 틸 데스크톱 */
+/* 1. Windows 3.1 Teal 데스크톱 */
 .retro-desktop-wrapper.retro-theme-win31 {
   background-color: #008080;
 }
 
-/* 2. 야간: MS-DOS 클래식 그린 CRT 터미널 */
+/* 2. MS-DOS Green CRT 터미널 */
 .retro-desktop-wrapper.retro-theme-green {
   background-color: #051408;
   color: #00ff66;
@@ -54,13 +53,25 @@ body {
   color: #00ff66;
 }
 
-.retro-desktop-wrapper.retro-theme-green .retro-btn {
+.retro-desktop-wrapper.retro-theme-green .retro-btn,
+.retro-desktop-wrapper.retro-theme-green .unit-toggle-btn,
+.retro-desktop-wrapper.retro-theme-green .retro-menubar,
+.retro-desktop-wrapper.retro-theme-green .retro-dropdown-menu {
   background: #0c2410;
   border-color: #00ff66 #006622 #006622 #00ff66;
   color: #00ff66;
 }
 
-/* 3. 비/눈/악천후: 앰버(Amber) CRT 터미널 */
+.retro-desktop-wrapper.retro-theme-green .retro-grid,
+.retro-desktop-wrapper.retro-theme-green .retro-extra-grid,
+.retro-desktop-wrapper.retro-theme-green .retro-box,
+.retro-desktop-wrapper.retro-theme-green .retro-row {
+  background: #051408;
+  border-color: #00ff66;
+  color: #00ff66;
+}
+
+/* 3. Amber CRT Phosphor 터미널 */
 .retro-desktop-wrapper.retro-theme-amber {
   background-color: #1a0f00;
   color: #ffaa00;
@@ -77,14 +88,110 @@ body {
   color: #ffcc00;
 }
 
-.retro-desktop-wrapper.retro-theme-amber .retro-btn {
+.retro-desktop-wrapper.retro-theme-amber .retro-btn,
+.retro-desktop-wrapper.retro-theme-amber .unit-toggle-btn,
+.retro-desktop-wrapper.retro-theme-amber .retro-menubar,
+.retro-desktop-wrapper.retro-theme-amber .retro-dropdown-menu {
   background: #331a00;
   border-color: #ffaa00 #804000 #804000 #ffaa00;
   color: #ffaa00;
 }
 
+.retro-desktop-wrapper.retro-theme-amber .retro-grid,
+.retro-desktop-wrapper.retro-theme-amber .retro-extra-grid,
+.retro-desktop-wrapper.retro-theme-amber .retro-box,
+.retro-desktop-wrapper.retro-theme-amber .retro-row {
+  background: #1a0f00;
+  border-color: #ffaa00;
+  color: #ffaa00;
+}
+
+/* 4. 고대비 다크모드 (High-Contrast Black & Neon) */
+.retro-desktop-wrapper.retro-theme-high-contrast {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-window {
+  background: #000000;
+  border: 2px solid #ffffff;
+  box-shadow: none;
+  color: #ffffff;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-titlebar {
+  background: #ffffff;
+  color: #000000;
+  border-bottom: 2px solid #ffffff;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .win-btn {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #ffffff;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-menubar {
+  background: #000000;
+  border-bottom: 2px solid #ffffff;
+  color: #ffff00;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-dropdown-menu {
+  background: #000000;
+  border: 2px solid #ffffff;
+  box-shadow: none;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .dropdown-item {
+  color: #ffffff;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .dropdown-item:hover {
+  background: #ffffff;
+  color: #000000;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-btn,
+.retro-desktop-wrapper.retro-theme-high-contrast .unit-toggle-btn {
+  background: #000000;
+  color: #ffff00;
+  border: 2px solid #ffffff;
+  box-shadow: none;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-btn:hover,
+.retro-desktop-wrapper.retro-theme-high-contrast .unit-toggle-btn.active,
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-btn.active {
+  background: #ffffff;
+  color: #000000;
+  border-color: #ffff00;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-grid,
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-extra-grid,
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-box,
+.retro-desktop-wrapper.retro-theme-high-contrast .retro-row {
+  background: #0a0a0a;
+  border: 1px solid #ffffff;
+  color: #ffffff;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .search-input-wrapper {
+  background: #000000;
+  border: 2px solid #ffff00;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .search-input.retro-input {
+  color: #ffff00;
+}
+
+.retro-desktop-wrapper.retro-theme-high-contrast .dos-ascii-bar {
+  color: #00ff66;
+}
+
 /* ==========================================================================
-   공통 Windows 3.x 레트로 창 (retro-window)
+   공통 레트로 윈도우 컨테이너
    ========================================================================== */
 .retro-app-container {
   width: 100%;
@@ -143,7 +250,7 @@ body {
   color: var(--win-black);
   border: 1px solid;
   border-color: #ffffff #404040 #404040 #ffffff;
-  font-size: 10px;
+  font-size: 11px;
   width: 16px;
   height: 16px;
   display: inline-flex;
@@ -157,27 +264,124 @@ body {
   border-color: #404040 #ffffff #ffffff #404040;
 }
 
-/* 레트로 메뉴바 & 단위 변환 토글 (옵션 D) */
+/* ==========================================================================
+   작동 가능한 클래식 레트로 메뉴바 & 풀다운 드롭다운
+   ========================================================================== */
 .retro-menubar {
   background: var(--win-gray);
   border-bottom: 1px solid #808080;
-  padding: 4px 8px;
+  padding: 3px 8px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   font-size: 12px;
   color: var(--win-black);
+  position: relative;
+  z-index: 80;
+}
+
+.menu-dropdown-wrapper {
+  position: relative;
 }
 
 .menu-item {
   cursor: pointer;
+  padding: 2px 6px;
+  user-select: none;
 }
 
-.menu-unit-toggle {
+.menu-item:hover,
+.menu-item.active {
+  background: var(--win-navy);
+  color: #ffffff;
+}
+
+/* 윈도우 3.1 스타일 풀다운 드롭다운 메뉴 */
+.retro-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  box-shadow: 2px 2px 0px #000000;
+  min-width: 210px;
+  z-index: 100;
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 4px 8px;
+  border: none;
+  background: transparent;
+  color: var(--win-black);
+  font-family: var(--dos-font);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  background: var(--win-navy);
+  color: #ffffff;
+}
+
+.dropdown-item.selected {
+  font-weight: bold;
+}
+
+.shortcut {
+  font-size: 10px;
+  color: #666666;
+  margin-left: 12px;
+}
+
+.dropdown-item:hover .shortcut {
+  color: #dddddd;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #808080;
+  border-bottom: 1px solid #ffffff;
+  margin: 3px 0;
+}
+
+/* 우측 빠른 도구 (고대비 토글 + 단위 토글) */
+.menu-quick-tools {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+}
+
+.retro-contrast-toggle-btn {
+  font-family: var(--dos-font);
+  font-size: 11px;
+  font-weight: bold;
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.retro-contrast-toggle-btn.active {
+  background: #000000;
+  color: #ffff00;
+  border-color: #ffff00;
+}
+
+.menu-unit-toggle {
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
 .toggle-label {
@@ -204,7 +408,6 @@ body {
 /* 메인 창 헤더 바디 */
 .retro-header-body {
   padding: 10px 8px 4px;
-  color: var(--win-black);
 }
 
 .retro-cli-title {
@@ -216,7 +419,7 @@ body {
 .retro-cli-sub {
   font-size: 12px;
   margin: 0;
-  color: #333333;
+  opacity: 0.85;
 }
 
 .retro-search-wrap {
@@ -285,7 +488,7 @@ body {
   outline: none;
   font-family: var(--dos-font);
   font-size: 13px;
-  color: #000000;
+  color: inherit;
 }
 
 .search-spinner {
@@ -299,6 +502,7 @@ body {
 
 .search-results-dropdown.retro-dropdown {
   background: #ffffff;
+  color: #000000;
   border: 2px solid #000000;
   box-shadow: 3px 3px 0px #000000;
   list-style: none;
@@ -320,6 +524,7 @@ body {
   font-size: 12px;
   cursor: pointer;
   text-align: left;
+  color: #000000;
 }
 
 .search-result-item:hover {
@@ -361,6 +566,7 @@ body {
   background: #ffffcc;
   border-color: #000080;
   font-weight: bold;
+  color: #000000;
 }
 
 .chip-remove-btn {
@@ -466,6 +672,7 @@ body {
   border: 1px solid #808080;
   padding: 6px 8px;
   font-size: 12px;
+  color: #000000;
 }
 
 .detail-item,
@@ -506,6 +713,7 @@ body {
   flex-direction: column;
   gap: 2px;
   font-size: 12px;
+  color: #000000;
 }
 
 .metric-header {
@@ -587,6 +795,7 @@ body {
   padding: 4px 8px;
   font-size: 12px;
   gap: 8px;
+  color: #000000;
 }
 
 .retro-code {
@@ -646,14 +855,98 @@ body {
   50% { opacity: 0; }
 }
 
+/* ==========================================================================
+   Windows 3.1 About 다이얼로그 모달
+   ========================================================================== */
+.retro-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.retro-modal-window {
+  width: 90%;
+  max-width: 440px;
+  background: var(--win-gray);
+  color: var(--win-black);
+}
+
+.modal-content-body {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 12px;
+}
+
+.modal-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.modal-app-info h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.modal-app-info p {
+  margin: 0;
+  font-size: 11px;
+}
+
+.modal-divider {
+  border: none;
+  height: 1px;
+  background: #808080;
+  border-bottom: 1px solid #ffffff;
+  margin: 4px 0;
+}
+
+.modal-features {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.modal-button-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.modal-ok-btn {
+  width: 80px;
+  justify-content: center;
+}
+
 /* 모바일 미디어 쿼리 */
-@media (max-width: 640px) {
+@media (max-width: 680px) {
   .retro-desktop-wrapper {
     padding: 8px 4px 20px;
   }
 
   .retro-cli-title {
     font-size: 15px;
+  }
+
+  .retro-menubar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .menu-quick-tools {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
   }
 
   .retro-row {
