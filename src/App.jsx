@@ -260,6 +260,7 @@ export default function App() {
               city={selectedCity}
               current={currentWeather}
               weatherInfo={weatherInfo}
+              daily={weatherData?.daily}
             />
             <AirQualityCard
               currentAQ={currentAQ}

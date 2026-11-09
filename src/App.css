@@ -541,7 +541,7 @@
 .weather-details-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 14px 10px;
   border-top: 1px solid var(--border);
   padding-top: 16px;
 }
@@ -557,20 +557,50 @@
   flex-shrink: 0;
 }
 
+.sunrise-sunset-icons {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
 .detail-text {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .detail-text .label {
   font-size: 11px;
   color: var(--text);
+  white-space: nowrap;
 }
 
 .detail-text .value {
   font-size: 14px;
   font-weight: 600;
   color: var(--text-h);
+  white-space: nowrap;
+}
+
+.detail-text .sun-times {
+  font-size: 12px;
+}
+
+.metric-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.mini-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 8px;
+  line-height: 1.2;
 }
 
 /* --------------------------------------------------------------------------

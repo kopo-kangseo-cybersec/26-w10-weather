@@ -73,10 +73,21 @@ export function getAirQualityStatus(pm10, pm25) {
 }
 
 /**
- * Open-Meteo 날씨 정보 조회 (현재 날씨 + 시간별 예보 + 7일간 일별 예보)
+ * 자외선 지수(UV Index) 등급 평가 (WMO / 기상청 기준)
+ */
+export function getUvIndexStatus(uv) {
+  if (uv >= 11) return { level: '위험', color: '#7c3aed' }
+  if (uv >= 8) return { level: '매우 높음', color: '#ef4444' }
+  if (uv >= 6) return { level: '높음', color: '#f97316' }
+  if (uv >= 3) return { level: '보통', color: '#f59e0b' }
+  return { level: '낮음', color: '#10b981' }
+}
+
+/**
+ * Open-Meteo 날씨 정보 조회 (현재 날씨 + 시간별 예보 + 7일간 일별 예보 + UV/일출일몰)
  */
 export async function fetchWeatherData(lat, lon) {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=Asia%2FSeoul`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m&hourly=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset,uv_index_max&timezone=Asia%2FSeoul`;
 
   try {
     const res = await fetch(url);
