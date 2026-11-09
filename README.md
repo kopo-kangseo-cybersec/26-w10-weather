@@ -55,7 +55,7 @@
 
 ## 실행 및 배포 링크
 
-- **Netlify 배포 URL**: https://26-w10-weather.netlify.app (또는 본인 사이트 주소)
+- **Netlify 배포 URL**: https://26-w10-weather.netlify.app/ (또는 본인 사이트 주소)
 - **GitHub Pages 배포 URL**: https://saltedsec.github.io/26-w10-weather/
 
 ---
