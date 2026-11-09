@@ -63,5 +63,5 @@
 
 ## 🌐 실행 및 배포 링크
 
-- **Netlify 배포 URL**: `https://<내-넷리파이-사이트>.netlify.app`
-- **GitHub Pages 배포 URL**: `https://<내-깃허브-아이디>.github.io/26-w10-weather/`
+- **Netlify 배포 URL**: `https://<내-넷리파이-사이트>.netlify.app` (Netlify 대시보드 배포 후 입력)
+- **GitHub Pages 배포 URL**: `https://yyoojjoo.github.io/26-w10-weather/`
