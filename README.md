@@ -49,8 +49,8 @@
 
 ## 실행 및 배포 링크
 
-- Netlify 배포 URL: 
-- GitHub Pages 배포 URL: 
+- Netlify 배포 URL: https://willowy-scone-f76c2b.netlify.app
+- GitHub Pages 배포 URL: https://mojodori.github.io/26-w10-weather/
 
 ## 커스터마이징한 부분
 
