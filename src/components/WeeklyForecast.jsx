@@ -3,9 +3,9 @@ import { CalendarDays, Umbrella } from 'lucide-react'
 import WeatherIcon from './WeatherIcon'
 import { getWeatherInfo } from '../api/weather'
 
-const DAY_NAMES = ['일', '월', '화', '수', '목', '금', '토']
+const DAY_NAMES = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT']
 
-export default function WeeklyForecast({ weather }) {
+export default function WeeklyForecast({ weather, unit = 'C', convertTemp }) {
   const dailyData = useMemo(() => {
     if (!weather?.daily?.time) return []
 
@@ -24,21 +24,26 @@ export default function WeeklyForecast({ weather }) {
       const dayOfWeek = DAY_NAMES[dateObj.getDay()]
       const isToday = dateStr === todayDateStr
 
+      const rawMax = temperature_2m_max[idx]
+      const rawMin = temperature_2m_min[idx]
+
+      const maxTemp = convertTemp ? convertTemp(rawMax) : Math.round(rawMax)
+      const minTemp = convertTemp ? convertTemp(rawMin) : Math.round(rawMin)
+
       return {
         dateStr,
-        dayLabel: isToday ? '오늘' : idx === 1 ? '내일' : `${dayOfWeek}요일`,
-        shortDate: `${dateObj.getMonth() + 1}.${dateObj.getDate()}`,
+        dayLabel: isToday ? 'TODAY' : idx === 1 ? 'TMRW' : dayOfWeek,
+        shortDate: `${dateObj.getMonth() + 1}/${dateObj.getDate()}`,
         code: weather_code ? weather_code[idx] : 0,
-        maxTemp: Math.round(temperature_2m_max[idx]),
-        minTemp: Math.round(temperature_2m_min[idx]),
+        maxTemp,
+        minTemp,
         precipProb: precipitation_probability_max ? precipitation_probability_max[idx] : 0,
       }
     })
-  }, [weather])
+  }, [weather, convertTemp])
 
   if (dailyData.length === 0) return null
 
-  // 7일 전체 중 최저/최고 기온을 기준으로 범위 바 계산
   const allMins = dailyData.map((d) => d.minTemp)
   const allMaxs = dailyData.map((d) => d.maxTemp)
   const globalMin = Math.min(...allMins)
@@ -46,41 +51,46 @@ export default function WeeklyForecast({ weather }) {
   const globalRange = globalMax - globalMin || 1
 
   return (
-    <article className="card weekly-card">
-      <div className="card-header">
-        <div className="card-title-group">
-          <CalendarDays size={18} className="card-header-icon" />
-          <span className="card-tag">7일간 주간 예보</span>
+    <article className="card weekly-card retro-window">
+      <div className="retro-titlebar">
+        <span className="title-text">WEEKLY_FORECAST.TXT</span>
+        <div className="titlebar-controls">
+          <span className="win-btn">_</span>
+          <span className="win-btn">■</span>
+          <span className="win-btn">X</span>
         </div>
-        <span className="weekly-desc-info">향후 1주일 기상 전망</span>
       </div>
 
-      <div className="weekly-list">
+      <div className="card-header retro-card-header">
+        <div className="card-title-group">
+          <CalendarDays size={16} className="card-header-icon" />
+          <span className="card-tag">[7-DAY_WEATHER_OUTLOOK]</span>
+        </div>
+        <span className="weekly-desc-info retro-code">STATUS: OK</span>
+      </div>
+
+      <div className="weekly-list retro-list">
         {dailyData.map((day) => {
           const info = getWeatherInfo(day.code)
-          // 최저~최고 기온 막대의 시작 위치(%)와 너비(%) 계산
           const leftPct = ((day.minTemp - globalMin) / globalRange) * 100
-          const widthPct = Math.max(((day.maxTemp - day.minTemp) / globalRange) * 100, 8)
+          const widthPct = Math.max(((day.maxTemp - day.minTemp) / globalRange) * 100, 10)
 
           return (
-            <div key={day.dateStr} className="weekly-row">
-              {/* 날짜 및 요일 */}
+            <div key={day.dateStr} className="weekly-row retro-row">
               <div className="weekly-day-col">
-                <span className="weekly-day-label">{day.dayLabel}</span>
+                <span className="weekly-day-label retro-code">{day.dayLabel}</span>
                 <span className="weekly-date-sub">{day.shortDate}</span>
               </div>
 
-              {/* 날씨 상태 아이콘 및 라벨 */}
               <div className="weekly-status-col">
-                <WeatherIcon iconName={info.icon} size={24} color={info.color} />
-                <span className="weekly-status-text">{info.label}</span>
+                <WeatherIcon iconName={info.icon} size={16} color={info.color} />
+                <span className="weekly-status-text retro-code">{info.label}</span>
               </div>
 
-              {/* 강수 확률 */}
               <div className="weekly-rain-col">
                 {day.precipProb > 0 ? (
-                  <span className="rain-prob">
-                    <Umbrella size={13} />
+                  <span className="rain-prob retro-code">
+                    <Umbrella size={16} />
                     {day.precipProb}%
                   </span>
                 ) : (
@@ -88,19 +98,18 @@ export default function WeeklyForecast({ weather }) {
                 )}
               </div>
 
-              {/* 최저 / 최고 기온 범위 바 */}
               <div className="weekly-temp-range-col">
-                <span className="temp-min">{day.minTemp}°</span>
-                <div className="temp-bar-track">
+                <span className="temp-min retro-code">{day.minTemp}°</span>
+                <div className="temp-bar-track retro-track">
                   <div
-                    className="temp-bar-fill"
+                    className="temp-bar-fill retro-fill"
                     style={{
                       left: `${leftPct}%`,
                       width: `${widthPct}%`,
                     }}
                   />
                 </div>
-                <span className="temp-max">{day.maxTemp}°</span>
+                <span className="temp-max retro-code">{day.maxTemp}°{unit}</span>
               </div>
             </div>
           )
@@ -109,4 +118,3 @@ export default function WeeklyForecast({ weather }) {
     </article>
   )
 }
-

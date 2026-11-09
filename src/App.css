@@ -1,248 +1,340 @@
-/* 실시간 날씨 & 완성형 대시보드 스타일 */
+/* ==========================================================================
+   MS-DOS / Windows 1.x / 2.x / 3.x 레트로 터미널 스타일시트
+   ========================================================================== */
+
+/* 전체 폰트 및 모노스페이스 고정 */
+:root {
+  --dos-font: 'Consolas', 'Courier New', 'Lucida Console', monospace;
+  --win-gray: #c0c0c0;
+  --win-white: #ffffff;
+  --win-dark: #808080;
+  --win-black: #000000;
+  --win-navy: #000080;
+  --win-teal: #008080;
+}
+
+body {
+  font-family: var(--dos-font) !important;
+  margin: 0;
+  background-color: var(--win-teal);
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+}
 
 /* ==========================================================================
-   동적 비주얼 테마 (옵션 A) 최상위 래퍼
+   옵션 A: 동적 비주얼 테마 (Windows 3.1 Teal, DOS Green, DOS Amber)
    ========================================================================== */
-.weather-app-wrapper {
+.retro-desktop-wrapper {
   min-height: 100vh;
   width: 100%;
-  transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 16px 10px 40px;
   box-sizing: border-box;
+  transition: background-color 0.4s ease;
 }
 
-/* 테마: 기본 */
-.weather-app-wrapper.theme-default {
-  background: var(--bg);
+/* 1. 맑은 낮: Windows 3.1 정통 틸 데스크톱 */
+.retro-desktop-wrapper.retro-theme-win31 {
+  background-color: #008080;
 }
 
-/* 테마: 맑은 낮 (화사한 스카이블루) */
-.weather-app-wrapper.theme-sunny-day {
-  background: linear-gradient(180deg, #e0f2fe 0%, #f0fdf4 40%, var(--bg) 100%);
+/* 2. 야간: MS-DOS 클래식 그린 CRT 터미널 */
+.retro-desktop-wrapper.retro-theme-green {
+  background-color: #051408;
+  color: #00ff66;
 }
 
-/* 테마: 맑은 밤 (깊은 밤하늘 딥 인디고-퍼플) */
-.weather-app-wrapper.theme-clear-night {
-  background: linear-gradient(180deg, #0f172a 0%, #1e1b4b 40%, #090d16 100%);
+.retro-desktop-wrapper.retro-theme-green .retro-window {
+  background: #081a0b;
+  border-color: #00ff66 #006622 #006622 #00ff66;
+  color: #00ff66;
 }
 
-/* 테마: 흐림 (소프트 슬레이트 그레이) */
-.weather-app-wrapper.theme-cloudy {
-  background: linear-gradient(180deg, #e2e8f0 0%, #f1f5f9 45%, var(--bg) 100%);
+.retro-desktop-wrapper.retro-theme-green .retro-titlebar {
+  background: #006622;
+  color: #00ff66;
 }
 
-.weather-app-wrapper.theme-cloudy-night {
-  background: linear-gradient(180deg, #1e293b 0%, #0f172a 50%, #050811 100%);
+.retro-desktop-wrapper.retro-theme-green .retro-btn {
+  background: #0c2410;
+  border-color: #00ff66 #006622 #006622 #00ff66;
+  color: #00ff66;
 }
 
-/* 테마: 비 / 소나기 (딥 블루-차분한 인디고) */
-.weather-app-wrapper.theme-rainy {
-  background: linear-gradient(180deg, #1e3a5f 0%, #1e293b 45%, #0b1120 100%);
+/* 3. 비/눈/악천후: 앰버(Amber) CRT 터미널 */
+.retro-desktop-wrapper.retro-theme-amber {
+  background-color: #1a0f00;
+  color: #ffaa00;
 }
 
-/* 테마: 눈 (맑고 시원한 쿨 아이스 블루) */
-.weather-app-wrapper.theme-snowy {
-  background: linear-gradient(180deg, #e0f2fe 0%, #f8fafc 45%, var(--bg) 100%);
+.retro-desktop-wrapper.retro-theme-amber .retro-window {
+  background: #241400;
+  border-color: #ffaa00 #995500 #995500 #ffaa00;
+  color: #ffaa00;
 }
 
-/* 테마: 뇌우 (어두운 퍼플-차콜) */
-.weather-app-wrapper.theme-stormy {
-  background: linear-gradient(180deg, #2e1065 0%, #18181b 45%, #050508 100%);
+.retro-desktop-wrapper.retro-theme-amber .retro-titlebar {
+  background: #804000;
+  color: #ffcc00;
 }
 
-/* 테마: 안개 (미스티 그레이) */
-.weather-app-wrapper.theme-foggy {
-  background: linear-gradient(180deg, #cbd5e1 0%, #f1f5f9 45%, var(--bg) 100%);
+.retro-desktop-wrapper.retro-theme-amber .retro-btn {
+  background: #331a00;
+  border-color: #ffaa00 #804000 #804000 #ffaa00;
+  color: #ffaa00;
 }
 
-/* 야간/어두운 테마 시 메인 텍스트 명암 보정 */
-.weather-app-wrapper.theme-clear-night .header-title h1,
-.weather-app-wrapper.theme-clear-night .subtitle,
-.weather-app-wrapper.theme-rainy .header-title h1,
-.weather-app-wrapper.theme-rainy .subtitle,
-.weather-app-wrapper.theme-stormy .header-title h1,
-.weather-app-wrapper.theme-stormy .subtitle,
-.weather-app-wrapper.theme-cloudy-night .header-title h1,
-.weather-app-wrapper.theme-cloudy-night .subtitle {
-  color: #f8fafc;
-}
-
-.weather-app {
+/* ==========================================================================
+   공통 Windows 3.x 레트로 창 (retro-window)
+   ========================================================================== */
+.retro-app-container {
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  padding: 32px 20px 56px;
   display: flex;
   flex-direction: column;
-  gap: 22px;
+  gap: 14px;
+}
+
+.retro-window {
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: #dfdfdf #404040 #404040 #dfdfdf;
+  box-shadow: 2px 2px 0px #000000;
   box-sizing: border-box;
+  padding: 3px;
+}
+
+/* 클래식 윈도우 타이틀바 */
+.retro-titlebar {
+  background: var(--win-navy);
+  color: var(--win-white);
+  padding: 3px 6px;
+  font-size: 13px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  user-select: none;
+  height: 22px;
+}
+
+.titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.titlebar-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.title-text {
+  letter-spacing: 0.5px;
+}
+
+.titlebar-controls {
+  display: flex;
+  gap: 3px;
+}
+
+.win-btn {
+  background: var(--win-gray);
+  color: var(--win-black);
+  border: 1px solid;
+  border-color: #ffffff #404040 #404040 #ffffff;
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.win-btn:active {
+  border-color: #404040 #ffffff #ffffff #404040;
+}
+
+/* 레트로 메뉴바 & 단위 변환 토글 (옵션 D) */
+.retro-menubar {
+  background: var(--win-gray);
+  border-bottom: 1px solid #808080;
+  padding: 4px 8px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--win-black);
+}
+
+.menu-item {
+  cursor: pointer;
+}
+
+.menu-unit-toggle {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.toggle-label {
+  font-weight: bold;
+}
+
+.unit-toggle-btn {
+  font-family: var(--dos-font);
+  font-size: 11px;
+  font-weight: bold;
+  background: var(--win-gray);
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+.unit-toggle-btn.active {
+  background: var(--win-navy);
+  color: var(--win-white);
+  border-color: #404040 #ffffff #ffffff #404040;
+}
+
+/* 메인 창 헤더 바디 */
+.retro-header-body {
+  padding: 10px 8px 4px;
+  color: var(--win-black);
+}
+
+.retro-cli-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 0 2px;
+}
+
+.retro-cli-sub {
+  font-size: 12px;
+  margin: 0;
+  color: #333333;
+}
+
+.retro-search-wrap {
+  padding: 6px 8px 10px;
 }
 
 /* ==========================================================================
-   상단 헤더 & 도시 검색창 (CitySearch)
+   레트로 버튼 (retro-btn)
    ========================================================================== */
-.app-header {
-  display: flex;
-  flex-direction: column;
+.retro-btn {
+  font-family: var(--dos-font);
+  font-size: 12px;
+  font-weight: bold;
+  background: var(--win-gray);
+  color: var(--win-black);
+  border: 2px solid;
+  border-color: #ffffff #808080 #808080 #ffffff;
+  padding: 4px 8px;
+  display: inline-flex;
   align-items: center;
-  gap: 16px;
-  text-align: center;
+  gap: 6px;
+  cursor: pointer;
+  box-shadow: 1px 1px 0px #000000;
+  text-decoration: none;
 }
 
-.header-title h1 {
-  font-size: 32px;
-  font-weight: 800;
-  margin: 0 0 6px;
-  color: var(--text-h);
-  letter-spacing: -0.6px;
+.retro-btn:active,
+.retro-btn.active {
+  border-color: #808080 #ffffff #ffffff #808080;
+  background: #a0a0a0;
+  color: #000080;
 }
 
-.subtitle {
-  font-size: 14px;
-  color: var(--text);
-  margin: 0;
+.retro-btn:disabled {
+  color: #808080;
+  cursor: not-allowed;
 }
 
-/* 도시 검색 컨테이너 */
+/* ==========================================================================
+   도시 검색 (CitySearch) 레트로화
+   ========================================================================== */
 .city-search-container {
-  position: relative;
   width: 100%;
-  max-width: 480px;
-  z-index: 50;
 }
 
 .search-input-wrapper {
-  position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
-  border-radius: 9999px;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  padding: 4px 8px;
+  gap: 8px;
 }
 
-.search-input-wrapper:focus-within {
-  border-color: #3b82f6;
-  background: var(--bg);
-  box-shadow: 0 4px 18px rgba(59, 130, 246, 0.22);
+.cli-prompt {
+  font-weight: bold;
+  color: #000080;
+  font-size: 13px;
 }
 
-.search-icon {
-  position: absolute;
-  left: 16px;
-  color: var(--text);
-  pointer-events: none;
-}
-
-.search-input {
-  width: 100%;
-  padding: 12px 42px 12px 46px;
+.search-input.retro-input {
+  flex: 1;
   background: transparent;
   border: none;
   outline: none;
-  font-size: 14px;
-  color: var(--text-h);
-  font-family: inherit;
+  font-family: var(--dos-font);
+  font-size: 13px;
+  color: #000000;
 }
 
 .search-spinner {
-  position: absolute;
-  right: 16px;
-  color: #3b82f6;
-  animation: spin 1s linear infinite;
+  animation: spin 1s steps(8) infinite;
 }
 
-.search-clear-btn {
-  position: absolute;
-  right: 14px;
-  background: transparent;
-  border: none;
-  color: var(--text);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
-  border-radius: 50%;
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.search-clear-btn:hover {
-  color: var(--text-h);
-}
-
-/* 자동완성 드롭다운 */
-.search-results-dropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+.search-results-dropdown.retro-dropdown {
+  background: #ffffff;
+  border: 2px solid #000000;
+  box-shadow: 3px 3px 0px #000000;
   list-style: none;
-  padding: 8px;
-  margin: 0;
-  max-height: 260px;
+  padding: 4px;
+  margin: 4px 0 0;
+  max-height: 200px;
   overflow-y: auto;
-  z-index: 100;
 }
 
 .search-result-item {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
+  gap: 8px;
+  padding: 4px 6px;
   border: none;
   background: transparent;
-  text-align: left;
-  border-radius: 10px;
+  font-family: var(--dos-font);
+  font-size: 12px;
   cursor: pointer;
-  transition: background 0.15s ease;
-  color: var(--text-h);
+  text-align: left;
 }
 
 .search-result-item:hover {
-  background: var(--code-bg);
-}
-
-.item-pin {
-  color: #3b82f6;
-  flex-shrink: 0;
-}
-
-.item-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.item-name {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.item-detail {
-  font-size: 12px;
-  color: var(--text);
-}
-
-.search-no-result {
-  padding: 14px;
-  text-align: center;
-  font-size: 13px;
-  color: var(--text);
+  background: var(--win-navy);
+  color: #ffffff;
 }
 
 /* ==========================================================================
-   최근 본 도시 (옵션 B)
+   최근 본 도시 (옵션 B) 레트로 칩
    ========================================================================== */
-.recent-cities-section {
+.recent-chips-list {
   display: flex;
   align-items: center;
-  gap: 10px;
-  justify-content: center;
+  gap: 6px;
+  padding: 6px 8px;
   flex-wrap: wrap;
 }
 
@@ -250,389 +342,176 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: var(--text);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: bold;
 }
 
-.recent-icon {
-  color: #3b82f6;
-}
-
-.recent-chips-list {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.recent-chip {
+.recent-chip.retro-chip {
+  background: #e0e0e0;
+  border: 1px solid #404040;
+  font-size: 11px;
+  padding: 2px 6px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: var(--bg);
-  border: 1px dashed var(--border);
-  border-radius: 9999px;
-  font-size: 12px;
-  color: var(--text-h);
+  gap: 4px;
   cursor: pointer;
-  transition: all 0.15s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
-.recent-chip:hover {
-  border-color: #3b82f6;
-  color: #3b82f6;
-  background: var(--code-bg);
-}
-
-.recent-chip.active {
-  border-style: solid;
-  border-color: #3b82f6;
-  color: #2563eb;
-  font-weight: 600;
+.recent-chip.retro-chip.active {
+  background: #ffffcc;
+  border-color: #000080;
+  font-weight: bold;
 }
 
 .chip-remove-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  border: none;
-  background: transparent;
-  color: var(--text);
-  cursor: pointer;
-  padding: 1px;
-  border-radius: 50%;
-}
-
-.chip-remove-btn:hover {
-  color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
 }
 
 /* ==========================================================================
-   주요 도시 선택 바 (CitySelector)
+   주요 도시 선택 (CitySelector)
    ========================================================================== */
-.city-selector-section {
-  width: 100%;
-}
-
 .city-button-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.city-btn {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  padding: 8px 16px;
-  border-radius: 9999px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text);
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-}
-
-.city-btn:hover {
-  background: var(--bg);
-  border-color: #3b82f6;
-  color: #3b82f6;
-  transform: translateY(-1px);
-}
-
-.city-btn.active {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #ffffff;
-  font-weight: 600;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.28);
-}
-
-.city-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
+  padding: 8px;
 }
 
 /* ==========================================================================
    상태 박스 (로딩 & 에러)
    ========================================================================== */
 .status-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 24px;
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  box-shadow: var(--shadow);
+  padding: 30px;
   text-align: center;
-  gap: 14px;
-}
-
-.loading-box {
-  color: var(--text);
-}
-
-.spin-icon {
-  animation: spin 1s linear infinite;
-  color: #3b82f6;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  font-size: 13px;
 }
 
 .error-box {
-  border-color: #fca5a5;
-  background: rgba(239, 68, 68, 0.04);
-}
-
-.error-icon {
-  color: #ef4444;
-}
-
-.error-message {
-  font-size: 15px;
-  color: var(--text-h);
-  max-width: 440px;
-  line-height: 1.5;
-}
-
-.retry-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  margin-top: 6px;
-  border-radius: 8px;
-  border: none;
-  background: #ef4444;
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.retry-btn:hover {
-  opacity: 0.9;
+  color: #ff0000;
 }
 
 /* ==========================================================================
-   대시보드 메인 레이아웃 & 카드
+   대시보드 메인 레이아웃 및 카드
    ========================================================================== */
 .dashboard-layout {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
 }
 
 .top-cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 20px;
-}
-
-/* 공통 카드 스타일 (글래스모피즘 & 부드러운 그림자) */
-.card {
-  border-radius: 20px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  backdrop-filter: blur(8px);
-  box-shadow: var(--shadow);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  text-align: left;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-  box-shadow: 0 10px 24px -4px rgba(0, 0, 0, 0.08);
-}
-
-.card-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--border);
-  padding-bottom: 12px;
-}
-
-.card-title-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.card-header-icon {
-  color: #3b82f6;
-}
-
-.card-tag {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text);
-}
-
-.location-name {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--text-h);
-}
-
-/* ==========================================================================
-   현재 날씨 카드 (CurrentWeather)
-   ========================================================================== */
-.weather-main-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.weather-icon-wrapper {
-  width: 90px;
-  height: 90px;
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.temp-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
-.current-temp {
-  font-size: 46px;
-  font-weight: 800;
-  line-height: 1;
-  color: var(--text-h);
-  display: flex;
-  align-items: flex-start;
-}
-
-.temp-unit {
-  font-size: 22px;
-  font-weight: 600;
-  margin-left: 2px;
-  color: var(--text);
-}
-
-.weather-status-label {
-  font-size: 17px;
-  font-weight: 700;
-  margin-top: 4px;
-}
-
-.weather-details-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  background: var(--code-bg);
-  padding: 12px 14px;
-  border-radius: 14px;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.detail-icon {
-  color: #3b82f6;
-  flex-shrink: 0;
-}
-
-.detail-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-label {
-  font-size: 11px;
-  color: var(--text);
-}
-
-.detail-value {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-h);
-}
-
-/* ==========================================================================
-   미세먼지 카드 (AirQualityCard)
-   ========================================================================== */
-.air-status-badge {
-  color: #ffffff;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 4px 12px;
-  border-radius: 9999px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
-
-.air-summary-box {
-  font-size: 13px;
-  color: var(--text);
-}
-
-.air-summary-box strong {
-  color: var(--text-h);
-}
-
-.air-metrics-grid {
-  display: flex;
-  flex-direction: column;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 14px;
 }
 
-.metric-box {
-  background: var(--code-bg);
-  padding: 12px 14px;
-  border-radius: 12px;
+.card {
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.retro-card-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 6px;
+  border-bottom: 1px dashed #808080;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* 현재 날씨 카드 */
+.retro-main-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px;
+}
+
+.retro-icon-wrapper {
+  background: #ffffff;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.retro-temp {
+  font-size: 32px;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.weather-status-label {
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 2px;
+}
+
+.retro-grid,
+.retro-extra-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  background: #e8e8e8;
+  border: 1px solid #808080;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
+.detail-item,
+.extra-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.detail-label,
+.extra-label {
+  font-weight: bold;
+}
+
+.detail-value,
+.extra-value {
+  margin-left: auto;
+}
+
+/* 미세먼지 카드 */
+.retro-summary {
+  font-size: 12px;
+  padding: 2px 6px;
+}
+
+.retro-metrics {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  padding: 4px 6px;
+}
+
+.retro-box {
+  background: #e8e8e8;
+  border: 1px solid #808080;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
 }
 
 .metric-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-}
-
-.metric-title {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.metric-grade {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-h);
+  font-weight: bold;
 }
 
 .metric-value-row {
@@ -641,244 +520,145 @@
   gap: 4px;
 }
 
-.metric-number {
-  font-size: 26px;
-  font-weight: 800;
-  color: var(--text-h);
-  line-height: 1;
+.retro-num {
+  font-size: 18px;
+  font-weight: bold;
 }
 
-.metric-unit {
-  font-size: 11px;
-  color: var(--text);
-}
-
-.metric-bar-bg {
-  width: 100%;
-  height: 6px;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 9999px;
-  overflow: hidden;
-}
-
-.metric-bar-fill {
-  height: 100%;
-  border-radius: 9999px;
-  transition: width 0.4s ease, background-color 0.4s ease;
-}
-
-/* ==========================================================================
-   24시간 기온 차트 카드 (HourlyChart) - 일체형 스크롤 정렬
-   ========================================================================== */
-.hourly-card {
-  padding-bottom: 18px;
-}
-
-.hourly-range-info {
+.dos-ascii-bar {
+  font-family: monospace;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #000080;
   font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
 }
 
-.hourly-chart-scroll-wrapper {
+.retro-badge {
+  font-size: 11px;
+  font-weight: bold;
+  color: #ffffff;
+  padding: 1px 6px;
+}
+
+/* 24시간 차트 (HourlyChart) */
+.hourly-range-info.retro-code,
+.weekly-desc-info.retro-code {
+  font-size: 11px;
+}
+
+.retro-scroll {
   width: 100%;
   overflow-x: auto;
-  overflow-y: hidden;
-  padding: 4px 0 2px;
-  scrollbar-width: thin;
-}
-
-.hourly-chart-scroll-wrapper::-webkit-scrollbar {
-  height: 6px;
-}
-
-.hourly-chart-scroll-wrapper::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 9999px;
-}
-
-.hourly-chart-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  padding: 4px 0;
+  background: #000000;
+  border: 2px solid;
+  border-color: #808080 #ffffff #ffffff #808080;
 }
 
 .hourly-icons-row {
   display: flex;
-  align-items: center;
-  padding: 6px 0 2px;
+  padding: 4px 0;
 }
 
 .hourly-icon-col {
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;
-  transition: transform 0.15s ease;
 }
 
-.hourly-icon-col:hover {
-  transform: scale(1.2);
-}
-
-.hourly-svg-chart {
+.retro-svg {
   display: block;
 }
 
-/* ==========================================================================
-   7일간 주간 예보 카드 (WeeklyForecast)
-   ========================================================================== */
-.weekly-desc-info {
-  font-size: 12px;
-  color: var(--text);
-}
-
-.weekly-list {
+/* 7일간 예보 (WeeklyForecast) */
+.retro-list {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  padding: 4px 6px;
+}
+
+.retro-row {
+  display: grid;
+  grid-template-columns: 60px 100px 70px 1fr;
+  align-items: center;
+  background: #e8e8e8;
+  border: 1px solid #808080;
+  padding: 4px 8px;
+  font-size: 12px;
   gap: 8px;
 }
 
-.weekly-row {
-  display: grid;
-  grid-template-columns: 80px 110px 70px 1fr;
-  align-items: center;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: var(--code-bg);
-  gap: 12px;
-}
-
-.weekly-day-col {
-  display: flex;
-  flex-direction: column;
+.retro-code {
+  font-family: var(--dos-font);
 }
 
 .weekly-day-label {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-h);
-}
-
-.weekly-date-sub {
-  font-size: 11px;
-  color: var(--text);
+  font-weight: bold;
 }
 
 .weekly-status-col {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.weekly-status-text {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-.weekly-rain-col {
-  font-size: 12px;
-  font-weight: 600;
-  color: #3b82f6;
-  display: flex;
-  align-items: center;
-}
-
-.rain-prob {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.rain-zero {
-  color: var(--text);
-  opacity: 0.5;
+  gap: 6px;
 }
 
 .weekly-temp-range-col {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 6px;
 }
 
-.temp-min {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  width: 28px;
-  text-align: right;
-}
-
-.temp-max {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-h);
-  width: 28px;
-  text-align: left;
-}
-
-.temp-bar-track {
+.retro-track {
   position: relative;
   flex: 1;
-  height: 6px;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 9999px;
-  overflow: hidden;
+  height: 8px;
+  background: #404040;
+  border: 1px solid #808080;
 }
 
-.temp-bar-fill {
+.retro-fill {
   position: absolute;
   top: 0;
   bottom: 0;
-  background: linear-gradient(90deg, #60a5fa, #f59e0b);
-  border-radius: 9999px;
+  background: #00ff66;
 }
 
-/* ==========================================================================
-   푸터 및 반응형 모바일 미디어 쿼리
-   ========================================================================== */
-.app-footer {
-  text-align: center;
-  margin-top: 12px;
-  font-size: 13px;
-  color: var(--text);
-  opacity: 0.8;
+/* 푸터 */
+.retro-footer {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px;
+  background: var(--win-gray);
+  color: var(--win-black);
 }
 
-@media (max-width: 680px) {
-  .weather-app {
-    padding: 20px 12px 40px;
-    gap: 18px;
+.blinking-cursor {
+  font-weight: bold;
+  animation: blink 0.8s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* 모바일 미디어 쿼리 */
+@media (max-width: 640px) {
+  .retro-desktop-wrapper {
+    padding: 8px 4px 20px;
   }
 
-  .header-title h1 {
-    font-size: 24px;
+  .retro-cli-title {
+    font-size: 15px;
   }
 
-  .city-btn {
-    padding: 7px 12px;
-    font-size: 12px;
-  }
-
-  .weather-details-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .weekly-row {
-    grid-template-columns: 60px 90px 50px 1fr;
-    padding: 8px 10px;
-    gap: 8px;
-  }
-
-  .weekly-status-text {
-    display: none;
-  }
-
-  .temp-min,
-  .temp-max {
-    width: 22px;
-    font-size: 12px;
+  .retro-row {
+    grid-template-columns: 50px 80px 50px 1fr;
+    font-size: 11px;
+    padding: 4px;
   }
 }

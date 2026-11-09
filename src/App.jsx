@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { RefreshCw, AlertCircle, History, X } from 'lucide-react'
+import { RefreshCw, AlertCircle, History, X, Monitor } from 'lucide-react'
 import {
   DEFAULT_CITIES,
   fetchWeatherData,
@@ -15,38 +15,22 @@ import './App.css'
 
 const RECENT_STORAGE_KEY = 'weather_recent_cities'
 
-// 날씨 상태 및 주야간(is_day) 기반 동적 비주얼 테마 클래스 계산
-function getDynamicThemeClass(weather) {
-  if (!weather?.current) return 'theme-default'
+// 옵션 A: MS-DOS / 레트로 터미널 동적 비주얼 테마
+function getRetroThemeClass(weather) {
+  if (!weather?.current) return 'retro-theme-win31'
 
   const { weather_code, is_day } = weather.current
 
-  // 비 / 소나기 (codes: 51, 53, 55, 61, 63, 65, 80, 81, 82)
-  if ([51, 53, 55, 61, 63, 65, 80, 81, 82].includes(weather_code)) {
-    return 'theme-rainy'
+  // 비 / 눈 / 뇌우: 앰버(Amber) CRT 터미널
+  if ([51, 53, 55, 61, 63, 65, 71, 73, 75, 77, 80, 81, 82, 95].includes(weather_code)) {
+    return 'retro-theme-amber'
   }
-  // 눈 / 싸락눈 / 폭설 (codes: 71, 73, 75, 77)
-  if ([71, 73, 75, 77].includes(weather_code)) {
-    return 'theme-snowy'
-  }
-  // 뇌우 (code: 95)
-  if (weather_code === 95) {
-    return 'theme-stormy'
-  }
-  // 안개 (codes: 45, 48)
-  if ([45, 48].includes(weather_code)) {
-    return 'theme-foggy'
-  }
-  // 흐림 (code: 3)
-  if (weather_code === 3) {
-    return is_day === 0 ? 'theme-cloudy-night' : 'theme-cloudy'
-  }
-
-  // 맑음 / 구름 조금 (codes: 0, 1, 2)
+  // 밤: 클래식 매트릭스/도스 그린 CRT 터미널
   if (is_day === 0) {
-    return 'theme-clear-night'
+    return 'retro-theme-green'
   }
-  return 'theme-sunny-day'
+  // 맑은 낮: 클래식 Windows 3.1 Teal 데스크톱
+  return 'retro-theme-win31'
 }
 
 export default function App() {
@@ -55,6 +39,19 @@ export default function App() {
   const [airQuality, setAirQuality] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
+
+  // 옵션 D: 섭씨(°C)와 화씨(°F) 단위 변환 토글
+  const [unit, setUnit] = useState('C')
+
+  const convertTemp = useCallback(
+    (celsius) => {
+      if (unit === 'F') {
+        return Math.round((celsius * 9) / 5 + 32)
+      }
+      return Math.round(celsius)
+    },
+    [unit]
+  )
 
   // 옵션 B: 최근 본 도시 목록 (localStorage)
   const [recentCities, setRecentCities] = useState(() => {
@@ -66,12 +63,10 @@ export default function App() {
     }
   })
 
-  // 도시 선택 및 최근 본 도시 업데이트
   const handleSelectCity = useCallback((city) => {
     setSelectedCity(city)
 
     setRecentCities((prev) => {
-      // 중복 제거 후 맨 앞에 추가 (최대 5개 유지)
       const filtered = prev.filter((item) => item.name !== city.name)
       const updated = [city, ...filtered].slice(0, 5)
       try {
@@ -83,7 +78,6 @@ export default function App() {
     })
   }, [])
 
-  // 최근 도시 항목 삭제
   const handleRemoveRecentCity = (e, cityName) => {
     e.stopPropagation()
     setRecentCities((prev) => {
@@ -97,7 +91,6 @@ export default function App() {
     })
   }
 
-  // 선택된 도시의 날씨 및 미세먼지 정보 로드
   const loadCityData = useCallback(async (city) => {
     setIsLoading(true)
     setError(null)
@@ -122,37 +115,77 @@ export default function App() {
     loadCityData(selectedCity)
   }, [selectedCity, loadCityData])
 
-  // 옵션 A: 날씨 및 낮/밤 기반 동적 테마 클래스
-  const themeClass = getDynamicThemeClass(weather)
+  const themeClass = getRetroThemeClass(weather)
 
   return (
-    <div className={`weather-app-wrapper ${themeClass}`}>
-      <div className="weather-app">
-        {/* 상단 헤더 */}
-        <header className="app-header">
-          <div className="header-title">
-            <h1>실시간 날씨 & 대시보드</h1>
-            <p className="subtitle">
-              Open-Meteo API 기반 국내외 도시 기상·미세먼지 실시간 모니터링
-            </p>
+    <div className={`retro-desktop-wrapper ${themeClass}`}>
+      <div className="retro-app-container">
+        {/* 상단 Windows 3.1 메인 창 프레임 */}
+        <header className="retro-main-window retro-window">
+          <div className="retro-titlebar">
+            <div className="titlebar-left">
+              <Monitor size={16} className="titlebar-icon" />
+              <span className="title-text">MS-DOS Weather System v3.11</span>
+            </div>
+            <div className="titlebar-controls">
+              <span className="win-btn">▲</span>
+              <span className="win-btn">▼</span>
+            </div>
           </div>
 
-          {/* 도시 검색창 (400ms 디바운스 적용) */}
-          <CitySearch onSelectCity={handleSelectCity} />
+          {/* 레트로 메뉴 바 및 단위 변환 토글 (옵션 D) */}
+          <div className="retro-menubar">
+            <span className="menu-item"><u>F</u>ile</span>
+            <span className="menu-item"><u>E</u>dit</span>
+            <span className="menu-item"><u>V</u>iew</span>
+            <span className="menu-item"><u>H</u>elp</span>
+            
+            {/* 옵션 D: 단위 변환 토글 버튼 */}
+            <div className="menu-unit-toggle">
+              <span className="toggle-label">[UNIT]:</span>
+              <button
+                type="button"
+                className={`unit-toggle-btn ${unit === 'C' ? 'active' : ''}`}
+                onClick={() => setUnit('C')}
+              >
+                °C
+              </button>
+              <button
+                type="button"
+                className={`unit-toggle-btn ${unit === 'F' ? 'active' : ''}`}
+                onClick={() => setUnit('F')}
+              >
+                °F
+              </button>
+            </div>
+          </div>
+
+          <div className="retro-header-body">
+            <h1 className="retro-cli-title">C:\WEATHER&gt; METEO_DASHBOARD.EXE</h1>
+            <p className="retro-cli-sub">&gt;&gt; Open-Meteo Realtime Telemetry Station (Terminal Mode)</p>
+          </div>
+
+          {/* 도시 검색 입력창 */}
+          <div className="retro-search-wrap">
+            <CitySearch onSelectCity={handleSelectCity} />
+          </div>
         </header>
 
         {/* 옵션 B: 최근 본 도시 뱃지 바 */}
         {recentCities.length > 0 && (
-          <section className="recent-cities-section" aria-label="최근 본 도시">
-            <div className="recent-header">
-              <History size={14} className="recent-icon" />
-              <span className="recent-label">최근 본 도시:</span>
+          <section className="recent-cities-section retro-window" aria-label="최근 본 도시">
+            <div className="retro-titlebar">
+              <span className="title-text">RECENT_CITIES.LOG</span>
             </div>
-            <div className="recent-chips-list">
+            <div className="recent-chips-list retro-content">
+              <div className="recent-header">
+                <History size={16} className="recent-icon" />
+                <span className="recent-label">&gt; RECENT:</span>
+              </div>
               {recentCities.map((city) => (
                 <div
                   key={city.name}
-                  className={`recent-chip ${selectedCity.name === city.name ? 'active' : ''}`}
+                  className={`recent-chip retro-chip ${selectedCity.name === city.name ? 'active' : ''}`}
                   onClick={() => setSelectedCity(city)}
                   role="button"
                   tabIndex={0}
@@ -164,7 +197,7 @@ export default function App() {
                     onClick={(e) => handleRemoveRecentCity(e, city.name)}
                     aria-label={`${city.name} 삭제`}
                   >
-                    <X size={12} />
+                    <X size={16} />
                   </button>
                 </div>
               ))}
@@ -172,7 +205,7 @@ export default function App() {
           </section>
         )}
 
-        {/* 1. 주요 도시 빠른 선택 버튼 바 */}
+        {/* 주요 도시 선택 바 */}
         <CitySelector
           cities={DEFAULT_CITIES}
           selectedCity={selectedCity}
@@ -183,46 +216,62 @@ export default function App() {
         {/* 메인 콘텐츠 영역 (로딩, 에러, 대시보드 카드들) */}
         <main className="main-content">
           {isLoading && (
-            <div className="status-box loading-box">
-              <RefreshCw className="spin-icon" size={36} />
-              <p><strong>{selectedCity.name}</strong> 기상 정보를 불러오는 중입니다...</p>
+            <div className="status-box retro-window loading-box">
+              <RefreshCw className="spin-icon" size={16} />
+              <p>&gt; [LOADING] DATA ACQUISITION IN PROGRESS FOR <strong>{selectedCity.name}</strong>...</p>
             </div>
           )}
 
           {error && !isLoading && (
-            <div className="status-box error-box">
-              <AlertCircle size={40} className="error-icon" />
-              <p className="error-message">{error}</p>
+            <div className="status-box retro-window error-box">
+              <AlertCircle size={16} className="error-icon" />
+              <p className="error-message">&gt; [SYSTEM ERROR] {error}</p>
               <button
                 type="button"
-                className="retry-btn"
+                className="retry-btn retro-btn"
                 onClick={() => loadCityData(selectedCity)}
               >
-                <RefreshCw size={16} /> 다시 시도
+                <RefreshCw size={16} /> RETRY.BAT
               </button>
             </div>
           )}
 
           {!isLoading && !error && weather && airQuality && (
             <div className="dashboard-layout">
-              {/* 상단 그리드: 현재 날씨 & 미세먼지 카드 */}
+              {/* 상단 2열 그리드: 현재 날씨 & 미세먼지 카드 */}
               <div className="top-cards-grid">
-                <CurrentWeather city={selectedCity} weather={weather} />
+                <CurrentWeather
+                  city={selectedCity}
+                  weather={weather}
+                  unit={unit}
+                  convertTemp={convertTemp}
+                />
                 <AirQualityCard city={selectedCity} airQuality={airQuality} />
               </div>
 
               {/* 중단: 24시간 시간별 기온 SVG 꺾은선 차트 */}
-              <HourlyChart weather={weather} />
+              <HourlyChart
+                weather={weather}
+                unit={unit}
+                convertTemp={convertTemp}
+              />
 
               {/* 하단: 7일간 주간 예보 */}
-              <WeeklyForecast weather={weather} />
+              <WeeklyForecast
+                weather={weather}
+                unit={unit}
+                convertTemp={convertTemp}
+              />
             </div>
           )}
         </main>
 
-        {/* 하단 푸터 */}
-        <footer className="app-footer">
-          <p>Data provided by Open-Meteo API • 한국 환경부 대기질 기준</p>
+        {/* 하단 도스 프롬프트 스타일 푸터 */}
+        <footer className="retro-footer retro-window">
+          <p>
+            C:\&gt; ECHO &quot;DATA PROVIDED BY OPEN-METEO API • KOREA AIR QUALITY STANDARD&quot;
+          </p>
+          <span className="blinking-cursor">_</span>
         </footer>
       </div>
     </div>

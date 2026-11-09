@@ -69,24 +69,31 @@ export default function CitySearch({ onSelectCity }) {
   }
 
   return (
-    <div className="city-search-container" ref={containerRef}>
-      <div className="search-input-wrapper">
-        <Search className="search-icon" size={18} />
+    <div className="city-search-container retro-window" ref={containerRef}>
+      <div className="retro-titlebar">
+        <span className="title-text">FIND_CITY.COM</span>
+        <div className="titlebar-controls">
+          <span className="win-btn">?</span>
+        </div>
+      </div>
+      <div className="search-input-wrapper retro-content">
+        <Search className="search-icon" size={16} />
+        <span className="cli-prompt">C:\&gt;</span>
         <input
           type="text"
-          className="search-input"
-          placeholder="전 세계 도시 검색 (예: Seoul, Tokyo, Paris)..."
+          className="search-input retro-input"
+          placeholder="검색 도시명 입력 (예: Seoul, Tokyo, London)..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => {
             if (results.length > 0) setIsOpen(true)
           }}
         />
-        {isSearching && <Loader2 className="search-spinner" size={18} />}
+        {isSearching && <Loader2 className="search-spinner" size={16} />}
         {!isSearching && query && (
           <button
             type="button"
-            className="search-clear-btn"
+            className="search-clear-btn retro-btn"
             onClick={handleClear}
             aria-label="검색어 지우기"
           >
@@ -96,7 +103,7 @@ export default function CitySearch({ onSelectCity }) {
       </div>
 
       {isOpen && (
-        <ul className="search-results-dropdown">
+        <ul className="search-results-dropdown retro-dropdown">
           {results.length > 0 ? (
             results.map((item) => (
               <li key={`${item.id}-${item.latitude}-${item.longitude}`}>
@@ -109,7 +116,7 @@ export default function CitySearch({ onSelectCity }) {
                   <div className="item-info">
                     <span className="item-name">{item.name}</span>
                     <span className="item-detail">
-                      {[item.admin1, item.country].filter(Boolean).join(', ')}
+                      [{[item.admin1, item.country].filter(Boolean).join(', ')}]
                     </span>
                   </div>
                 </button>
@@ -118,7 +125,7 @@ export default function CitySearch({ onSelectCity }) {
           ) : (
             !isSearching && query.trim().length >= 2 && (
               <li className="search-no-result">
-                <span>검색 결과가 없습니다. 영문 도시명으로 검색해 보세요.</span>
+                <span>[ERROR 404] 검색 결과가 없습니다. 영문 도시명으로 시도하세요.</span>
               </li>
             )
           )}
@@ -127,4 +134,3 @@ export default function CitySearch({ onSelectCity }) {
     </div>
   )
 }
-
