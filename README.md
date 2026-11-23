@@ -65,7 +65,7 @@
 ## 🚀 실행 및 배포 링크
 
 - **Netlify 배포 URL**: https://26-w10-weather.netlify.app (배포 설정 후 등록)
-- **GitHub Pages 배포 URL**: https://kopo-kangseo-cybersec.github.io/26-w10-weather/ (배포 설정 후 등록)
+- **GitHub Pages 배포 URL**: https://jjkjsjjkjsjjkjs-boop.github.io/26-w10-weather/
 
 ---
 
