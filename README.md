@@ -64,7 +64,7 @@
 
 ## 🚀 실행 및 배포 링크
 
-- **Netlify 배포 URL**: https://26-w10-weather.netlify.app (배포 설정 후 등록)
+- **Netlify 배포 URL**: https://spontaneous-malabi-ded1ce.netlify.app
 - **GitHub Pages 배포 URL**: https://jjkjsjjkjsjjkjs-boop.github.io/26-w10-weather/
 
 ---
