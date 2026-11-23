@@ -1,4 +1,156 @@
-/* 대시보드 메인 레이아웃 및 컴포넌트 스타일 */
+/* 1. 최외곽 전체 래퍼 및 동적 비주얼 테마 정의 */
+.weather-app-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  transition: background 0.7s ease, color 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 동적 테마 그라데이션 목록 */
+/* 낮 - 맑음/햇살 */
+.theme-sunny {
+  background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 35%, #fef3c7 70%, #ffedd5 100%);
+}
+
+/* 낮 - 구름/흐림 */
+.theme-cloudy {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 35%, #e2e8f0 70%, #cbd5e1 100%);
+}
+
+/* 낮 - 비/소나기 */
+.theme-rainy {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 40%, #93c5fd 75%, #94a3b8 100%);
+}
+
+/* 낮 - 눈 */
+.theme-snowy {
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 40%, #dbeafe 75%, #bfdbfe 100%);
+}
+
+/* 밤 - 맑음/구름 (차분한 밤하늘) */
+.theme-night {
+  background: linear-gradient(135deg, #090d16 0%, #0f172a 40%, #1e1b4b 100%);
+  color: #e2e8f0;
+}
+
+/* 밤 - 비/뇌우 */
+.theme-night-rain {
+  background: linear-gradient(135deg, #050b14 0%, #0f2027 45%, #182a3a 100%);
+  color: #e2e8f0;
+}
+
+/* 기본 테마 */
+.theme-default {
+  background: var(--bg);
+}
+
+/* 밤 테마 전용 텍스트 및 카드 반투명 글래스모피즘 대응 */
+.theme-night .app-title,
+.theme-night-rain .app-title,
+.theme-night .location-name,
+.theme-night-rain .location-name,
+.theme-night .current-temp,
+.theme-night-rain .current-temp,
+.theme-night .weather-label,
+.theme-night-rain .weather-label,
+.theme-night .metric-val,
+.theme-night-rain .metric-val,
+.theme-night .aqi-value,
+.theme-night-rain .aqi-value,
+.theme-night .day-name,
+.theme-night-rain .day-name,
+.theme-night .weekly-weather-label,
+.theme-night-rain .weekly-weather-label,
+.theme-night .result-name,
+.theme-night-rain .result-name {
+  color: #f8fafc;
+}
+
+.theme-night .card,
+.theme-night-rain .card {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+}
+
+.theme-night .metric-item,
+.theme-night-rain .metric-item,
+.theme-night .air-main,
+.theme-night-rain .air-main,
+.theme-night .weekly-item,
+.theme-night-rain .weekly-item,
+.theme-night .search-input-wrap,
+.theme-night-rain .search-input-wrap,
+.theme-night .city-btn,
+.theme-night-rain .city-btn,
+.theme-night .refresh-btn,
+.theme-night-rain .refresh-btn,
+.theme-night .status-card,
+.theme-night-rain .status-card {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: #cbd5e1;
+}
+
+.theme-night .search-dropdown,
+.theme-night-rain .search-dropdown {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.theme-night .search-input,
+.theme-night-rain .search-input {
+  color: #f8fafc;
+}
+
+.theme-night .chart-temp-label,
+.theme-night-rain .chart-temp-label {
+  fill: #f8fafc;
+}
+
+.theme-night .chart-time-label,
+.theme-night-rain .chart-time-label {
+  fill: #94a3b8;
+}
+
+/* 낮 테마 카드 반투명 글래스모피즘 */
+.theme-sunny .card,
+.theme-cloudy .card,
+.theme-rainy .card,
+.theme-snowy .card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+}
+
+.theme-sunny .metric-item,
+.theme-cloudy .metric-item,
+.theme-rainy .metric-item,
+.theme-snowy .metric-item,
+.theme-sunny .air-main,
+.theme-cloudy .air-main,
+.theme-rainy .air-main,
+.theme-snowy .air-main,
+.theme-sunny .weekly-item,
+.theme-cloudy .weekly-item,
+.theme-rainy .weekly-item,
+.theme-snowy .weekly-item,
+.theme-sunny .search-input-wrap,
+.theme-cloudy .search-input-wrap,
+.theme-rainy .search-input-wrap,
+.theme-snowy .search-input-wrap,
+.theme-sunny .city-btn,
+.theme-cloudy .city-btn,
+.theme-rainy .city-btn,
+.theme-snowy .city-btn {
+  background: rgba(248, 250, 252, 0.85);
+  border-color: rgba(226, 232, 240, 0.8);
+}
+
+/* 대시보드 내부 컨테이너 */
 .weather-app {
   width: 100%;
   max-width: 960px;
@@ -10,7 +162,7 @@
   box-sizing: border-box;
 }
 
-/* 1. 헤더 스타일 */
+/* 2. 헤더 스타일 */
 .app-header {
   display: flex;
   justify-content: space-between;
@@ -25,14 +177,35 @@
   text-align: left;
 }
 
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
 .app-title {
   font-size: 26px;
   font-weight: 700;
-  margin: 0 0 6px 0;
+  margin: 0;
   color: var(--text-h);
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.theme-indicator-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  background: rgba(170, 59, 255, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(170, 59, 255, 0.28);
+  backdrop-filter: blur(8px);
 }
 
 .app-subtitle {
@@ -75,7 +248,7 @@
   cursor: not-allowed;
 }
 
-/* 2. 도시 검색 컴포넌트 */
+/* 3. 도시 검색 컴포넌트 */
 .search-section {
   width: 100%;
 }
@@ -215,7 +388,7 @@
   color: var(--text);
 }
 
-/* 3. 도시 선택 버튼 */
+/* 4. 도시 선택 버튼 */
 .city-selector-section {
   width: 100%;
 }
@@ -255,7 +428,7 @@
   box-shadow: 0 2px 8px rgba(170, 59, 255, 0.35);
 }
 
-/* 4. 상태 카드 (로딩 및 에러) */
+/* 5. 상태 카드 (로딩 및 에러) */
 .status-card {
   padding: 48px 24px;
   border-radius: 16px;
@@ -290,7 +463,7 @@
   cursor: pointer;
 }
 
-/* 5. 대시보드 그리드 */
+/* 6. 대시보드 그리드 */
 .dashboard-grid {
   display: flex;
   flex-direction: column;
@@ -304,8 +477,6 @@
 }
 
 .card {
-  background: var(--bg);
-  border: 1px solid var(--border);
   border-radius: 16px;
   padding: 22px;
   box-shadow: var(--shadow);
@@ -400,7 +571,6 @@
   justify-content: space-between;
   align-items: center;
   padding: 12px 16px;
-  background: var(--code-bg);
   border-radius: 12px;
 }
 
@@ -449,7 +619,6 @@
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  background: var(--code-bg);
   border-radius: 10px;
 }
 
@@ -520,7 +689,7 @@
   background: #ef4444;
 }
 
-/* 6. 24시간 SVG 차트 카드 */
+/* 7. 24시간 SVG 차트 카드 */
 .hourly-chart-card {
   padding-bottom: 16px;
 }
@@ -550,7 +719,7 @@
   fill: var(--text);
 }
 
-/* 7. 주간 예보 카드 */
+/* 8. 주간 예보 카드 */
 .weekly-card {
   gap: 16px;
 }
@@ -567,7 +736,6 @@
   align-items: center;
   padding: 8px 12px;
   border-radius: 10px;
-  background: var(--code-bg);
   gap: 12px;
 }
 
