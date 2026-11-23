@@ -6,7 +6,7 @@
   padding: 24px 16px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 20px;
   box-sizing: border-box;
 }
 
@@ -26,7 +26,7 @@
 }
 
 .app-title {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 700;
   margin: 0 0 6px 0;
   color: var(--text-h);
@@ -75,7 +75,147 @@
   cursor: not-allowed;
 }
 
-/* 2. 도시 선택 버튼 */
+/* 2. 도시 검색 컴포넌트 */
+.search-section {
+  width: 100%;
+}
+
+.city-search-container {
+  position: relative;
+  width: 100%;
+}
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0 14px;
+  transition: all 0.2s ease;
+}
+
+.search-input-wrap:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.search-icon {
+  color: var(--text);
+  flex-shrink: 0;
+  margin-right: 8px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  color: var(--text-h);
+  font-family: inherit;
+}
+
+.search-input::placeholder {
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.search-spinner {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.clear-query-btn {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.clear-query-btn:hover {
+  color: var(--text-h);
+}
+
+.search-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  z-index: 50;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.search-results-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+}
+
+.search-result-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.search-result-item:hover {
+  background: var(--accent-bg);
+}
+
+.result-pin {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.result-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.result-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.result-sub {
+  font-size: 12px;
+  color: var(--text);
+}
+
+.result-coords {
+  margin-left: 6px;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.search-no-results {
+  padding: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text);
+}
+
+/* 3. 도시 선택 버튼 */
 .city-selector-section {
   width: 100%;
 }
@@ -94,9 +234,9 @@
   background: var(--code-bg);
   border: 1px solid var(--border);
   color: var(--text);
-  padding: 8px 14px;
+  padding: 7px 14px;
   border-radius: 9999px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -115,7 +255,7 @@
   box-shadow: 0 2px 8px rgba(170, 59, 255, 0.35);
 }
 
-/* 3. 상태 카드 (로딩 및 에러) */
+/* 4. 상태 카드 (로딩 및 에러) */
 .status-card {
   padding: 48px 24px;
   border-radius: 16px;
@@ -150,7 +290,13 @@
   cursor: pointer;
 }
 
-/* 4. 카드 그리드 */
+/* 5. 대시보드 그리드 */
+.dashboard-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
 .cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -161,11 +307,11 @@
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 24px;
+  padding: 22px;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   text-align: left;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -194,7 +340,7 @@
 .location-name {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 14px;
   font-weight: 600;
   color: var(--text-h);
@@ -205,7 +351,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 8px 0;
 }
 
 .weather-icon-wrap {
@@ -227,7 +373,7 @@
 }
 
 .current-temp {
-  font-size: 64px;
+  font-size: 60px;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -2px;
@@ -235,7 +381,7 @@
 }
 
 .temp-unit {
-  font-size: 24px;
+  font-size: 22px;
   font-weight: 600;
   margin-top: 6px;
   color: var(--text);
@@ -291,7 +437,7 @@
   color: var(--text-h);
 }
 
-/* 지표 그리드 (공통) */
+/* 지표 그리드 */
 .metrics-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -318,7 +464,7 @@
 }
 
 .metric-val {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-h);
 }
@@ -374,7 +520,137 @@
   background: #ef4444;
 }
 
-/* 애니메이션 및 유틸 */
+/* 6. 24시간 SVG 차트 카드 */
+.hourly-chart-card {
+  padding-bottom: 16px;
+}
+
+.chart-scroll-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hourly-svg {
+  width: 100%;
+  min-width: 680px;
+  height: 150px;
+  display: block;
+}
+
+.chart-temp-label {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--text-h);
+}
+
+.chart-time-label {
+  font-size: 11px;
+  font-weight: 500;
+  fill: var(--text);
+}
+
+/* 7. 주간 예보 카드 */
+.weekly-card {
+  gap: 16px;
+}
+
+.weekly-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.weekly-item {
+  display: grid;
+  grid-template-columns: 80px 140px 1fr;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: var(--code-bg);
+  gap: 12px;
+}
+
+.weekly-day {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.date-sub {
+  font-size: 11px;
+  color: var(--text);
+}
+
+.weekly-weather-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.weekly-weather-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-h);
+}
+
+.precip-prob {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #0284c7;
+  background: rgba(2, 132, 199, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.weekly-temp-range {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.min-temp {
+  font-size: 13px;
+  font-weight: 600;
+  color: #3b82f6;
+  width: 28px;
+  text-align: right;
+}
+
+.max-temp {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ef4444;
+  width: 28px;
+  text-align: left;
+}
+
+.temp-bar-bg {
+  flex-grow: 1;
+  height: 6px;
+  background: var(--border);
+  border-radius: 9999px;
+  position: relative;
+  overflow: hidden;
+}
+
+.temp-bar-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #3b82f6, #ef4444);
+  border-radius: 9999px;
+}
+
+/* 유틸리티 애니메이션 */
 .spinning {
   animation: spin 1s linear infinite;
 }
@@ -398,6 +674,7 @@
   text-align: center;
 }
 
+/* 반응형 모바일 */
 @media (max-width: 640px) {
   .app-header {
     flex-direction: column;
@@ -405,5 +682,13 @@
   }
   .cards-grid {
     grid-template-columns: 1fr;
+  }
+  .weekly-item {
+    grid-template-columns: 65px 110px 1fr;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .weekly-weather-label {
+    display: none;
   }
 }
