@@ -43,8 +43,8 @@ Google Antigravity IDE와 Open-Meteo 공개 기상 API를 연동하여 제작한
 
 ## 실행 및 배포 링크
 
-- Netlify 배포 URL: `(Netlify 배포 후 URL 입력)`
-- GitHub Pages 배포 URL: `(GitHub Pages 배포 후 URL 입력)`
+- Netlify 배포 URL: https://w10-weather.netlify.app/
+- GitHub Pages 배포 URL: https://parksj1999.github.io/w10-weather/
 
 ---
 
